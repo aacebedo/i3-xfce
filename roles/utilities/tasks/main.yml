@@ -22,7 +22,8 @@
        - feh  
        - git
        - python-software-properties
-       
+       - git-flow
+   
     - get_url: url=https://github.com/clvv/fasd/archive/1.0.1.tar.gz dest=/tmp/fasd.tar.gz
     - unarchive: src=/tmp/fasd.tar.gz dest=/tmp/
     - shell: make install chdir=/tmp/fasd-1.0.1
