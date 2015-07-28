@@ -1,0 +1,25 @@
+    - apt_repository: repo='{{item}}' state=absent update_cache=true
+      with_items: 
+       - ppa:numix/ppa
+
+    - apt: pkg={{item}} force=yes state=absent  
+      with_items:
+       - numix-plymouth-theme
+       - numix-folders
+       - fonts-powerline
+       - numix-gtk-theme
+       - numix-icon-theme-circle
+       - compton
+       - feh
+       - conky
+
+    - file: path=/home/{{remote_user}}/.i3 state=absent
+
+    - file: path=/home/{{remote_user}}/.conky state=absent
+    
+    - file: path=/home/{{remote_user}}/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml state=absent
+    - file: path=/home/{{remote_user}}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml state=absent
+    
+    - file: path=/home/{{remote_user}}/.fonts/{{ item }} state=absent
+      with_fileglob:
+       - fonts/*
