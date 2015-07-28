@@ -26,8 +26,17 @@ import argparse
 import subprocess
 import yaml
 import uuid
+from enum import *
 
-class Installer:
+class StringifiedEnum(Enum):  
+  def __str__(self):
+    return str(self.value)
+
+class Action(StringifiedEnum):
+  INSTALL = "install"
+  UNINSTALL = "uninstall"
+
+class CmdLine:
   @staticmethod
   def generateTempDir():
     tmpPath = os.path.join("/tmp",str(uuid.uuid1()));
@@ -39,26 +48,34 @@ class Installer:
   
   @staticmethod
   def install(args):
+    CmdLine.performAction(Action.INSTALL, args)
+    
+  @staticmethod
+  def uninstall(action,args):
+    CmdLine.performAction(Action.UNINSTALL, args)
+  
+  @staticmethod
+  def performAction(action,args):
     #Get the real user behind the sudo
     username = os.getenv("SUDO_USER")
     if(username != None):
       verbosity = ""
       if args.verbose != None:
         verbose = "-vvv"
-      tmpPath = Installer.generateTempDir()
+      tmpPath = CmdLine.generateTempDir()
       playbookPath = os.path.join(tmpPath,"i3-xfce.playbook")
       playbook = [{}]
       playbook[0]["hosts"] = "all"
       playbook[0]["roles"] = args.parts
       playbookFile = open(playbookPath,'w')
       playbookFile.write(yaml.dump(playbook,default_flow_style=False,explicit_start=True))
+      playbookFile.close()
       rolesPath = os.path.join(os.path.dirname(os.path.realpath(__file__)),"roles")
       
-      playbookFile.close()
-      command = 'ansible-playbook -i "localhost," -e "remote_user={0}" -c local {1} {2}'.format(username,playbookPath,verbosity)   
+      command = 'ansible-playbook -i "localhost," -e "remote_user={0} action={1}" -c local {2} {3}'.format(username,str(action), playbookPath,verbosity)
       try:
         p = subprocess.Popen(command, shell=True, stderr=subprocess.PIPE, cwd=os.path.dirname(os.path.realpath(__file__)), env=dict(os.environ, ANSIBLE_ROLES_PATH=rolesPath))
-        print p.communicate()
+        p.communicate()
         if p.returncode != 0:
           raise Exception("Error when executing ansible")
       except Exception as e:
@@ -67,8 +84,7 @@ class Installer:
       shutil.rmtree(tmpPath)
     else:
       raise Exception("This program must be ran as root")
-
-class CmdLine:
+    
   @staticmethod
   def parseArgs(rawArgs):
     rolesPath = os.path.join(os.path.dirname(os.path.realpath(__file__)),"roles")
@@ -82,13 +98,17 @@ class CmdLine:
     installParser.add_argument('--parts','-p', help='Parts to install', nargs="+", metavar=dirs, type=str, choices=dirs, default=dirs)
     installParser.add_argument('--verbose',"-v", help='Verbose mode', action='store_true')
     
+        # Parser for list command
+    installParser = rootSubparsers.add_parser('uninstall', help='uninstall files')
+    installParser.add_argument('--parts','-p', help='Parts to install', nargs="+", metavar=dirs, type=str, choices=dirs, default=dirs)
+    installParser.add_argument('--verbose',"-v", help='Verbose mode', action='store_true')
+    
     return parser.parse_args(rawArgs[1:])
         
 if __name__ == "__main__":
   try:
-    Installer.install(CmdLine.parseArgs(sys.argv))
+    args = CmdLine.parseArgs(sys.argv)
+    CmdLine.performAction(args.function, args)
     sys.exit()
   except Exception as e:
     sys.exit("An error occured: {0}".format(e))
-    
-    

@@ -1,0 +1,8 @@
+    - file: path=/home/{{remote_user}}/.zshrc state=absent
+    - shell: chsh {{remote_user}} -s /bin/bash
+    - file: path=/home/{{remote_user}}/.oh-my-zsh state=absent
+
+    - apt: pkg={{item}} force=yes state=absent  
+      with_items:
+       - zsh
+       - tree
