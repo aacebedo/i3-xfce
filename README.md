@@ -14,9 +14,12 @@ $> ./i3-xfce install
 $> ./i3-xfce install -p <parts>
 ##### Install all
 $> ./i3-xfce install -h
-
-### Todos
- - Add uninstall command
+##### Uninstall all
+$> ./i3-xfce uninstall
+##### Uninstall parts
+$> ./i3-xfce uninstall -p <parts>
+##### Uninstall all
+$> ./i3-xfce uninstall -h
 
 ### Screenshots
 ![alt tag](https://raw.github.com/aacebedo/i3-xfce/master/screenshot.png)
