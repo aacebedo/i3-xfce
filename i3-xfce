@@ -17,17 +17,80 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library.
 ##########################################################################
-
+import re
 import os
 import sys
 import shutil
 import pwd
 import argparse
 import subprocess
-import yaml
 import uuid
-from enum import *
+import distutils.spawn
+try:
+  import yaml
+except Exception as e:
+  sys.exit("Python-yaml is missing")
+try:
+  from enum import *
+except Exception as e:
+  sys.exit("Python-yaml is missing")
 
+class RegexedQuestion:
+    _question = ""
+    _regex = ""
+    _options = []
+    _default = None
+    _errorMsg = ""
+    _logger = None
+    
+    def __init__(self,question,errorMsg,regex = ".*", default = None):
+        self._question = question
+        self._regex = regex
+        self._errorMsg = errorMsg
+        if type(default) is str:
+            self._default = default
+        else:
+            self._default = ""
+    
+    def ask(self):
+        questionTmp = self._question
+        if self._default != "":
+            questionTmp += " [{0}]".format(self._default)
+        v = raw_input(questionTmp+ ": ")
+        if v == "":
+            v = self._default
+        if re.match(self._regex,v) :
+            return v
+        else:
+            print("{0}.".format(self._errorMsg))
+            return RegexedQuestion.ask(self)
+        
+class BinaryQuestion(RegexedQuestion):
+    _question = ""
+    _options = None
+    
+    def __init__(self,question,errorMsg,logger,default = None):
+        if type(default) is str and re.match("Y|y|N|n",default):
+            self._default = default
+            
+        RegexedQuestion.__init__(self,question+" Y/N",errorMsg,logger,"Y|y|N|n",default)
+        self._options = {
+                         "Y" : self.ok,
+                         "y" : self.ok,
+                         "N" : self.nok,
+                         "n" : self.nok
+                         }
+    
+    def ok(self):
+        return True
+    
+    def nok(self):
+        return False
+    
+    def ask(self):
+        v = RegexedQuestion.ask(self)
+        return (self._options.get(v))()
+      
 class StringifiedEnum(Enum):  
   def __str__(self):
     return str(self.value)
@@ -58,32 +121,42 @@ class CmdLine:
   def performAction(action,args):
     #Get the real user behind the sudo
     username = os.getenv("SUDO_USER")
-    if(username != None):
-      verbosity = ""
-      if args.verbose != None:
-        verbose = "-vvv"
-      tmpPath = CmdLine.generateTempDir()
-      playbookPath = os.path.join(tmpPath,"i3-xfce.playbook")
-      playbook = [{}]
-      playbook[0]["hosts"] = "all"
-      playbook[0]["roles"] = args.parts
-      playbookFile = open(playbookPath,'w')
-      playbookFile.write(yaml.dump(playbook,default_flow_style=False,explicit_start=True))
-      playbookFile.close()
-      rolesPath = os.path.join(os.path.dirname(os.path.realpath(__file__)),"roles")
-      
-      command = 'ansible-playbook -i "localhost," -e "remote_user={0} action={1}" -c local {2} {3}'.format(username,str(action), playbookPath,verbosity)
-      try:
-        p = subprocess.Popen(command, shell=True, stderr=subprocess.PIPE, cwd=os.path.dirname(os.path.realpath(__file__)), env=dict(os.environ, ANSIBLE_ROLES_PATH=rolesPath))
-        p.communicate()
-        if p.returncode != 0:
-          raise Exception("Error when executing ansible")
-      except Exception as e:
-        shutil.rmtree(tmpPath)
-        raise(e)
-      shutil.rmtree(tmpPath)
-    else:
+
+    if(username == None):
       raise Exception("This program must be ran as root")
+    
+    additional_options = ""
+    if args.verbose != False:
+      additional_options += " -vvv"
+    if args.dryrun != False:
+      additional_options += " --check"
+    tmpPath = CmdLine.generateTempDir()
+    playbookPath = os.path.join(tmpPath,"i3-xfce.playbook")
+    playbook = [{}]
+    playbook[0]["hosts"] = "all"
+    playbook[0]["roles"] = args.parts
+    playbookFile = open(playbookPath,'w')
+    playbookFile.write(yaml.dump(playbook,default_flow_style=False,explicit_start=True))
+    playbookFile.close()
+    rolesPath = os.path.join(os.path.dirname(os.path.realpath(__file__)),"roles")
+    
+    ansibleConfig = open(os.path.join(tmpPath,"ansible.cfg"),"w+")
+    ansibleConfig.write("[defaults]\r\n")
+    ansibleConfig.write("display_skipped_hosts=False\r\n")
+    ansibleConfig.write("roles_path={0}".format(rolesPath))
+    ansibleConfig.close()
+    
+    command = 'ansible-playbook -i "localhost," -e "remote_user={0} action={1}" -c local {2} {3}'.format(username,str(action), playbookPath,additional_options)
+    
+    try:
+      p = subprocess.Popen(command, shell=True, stderr=subprocess.PIPE, cwd=os.path.dirname(os.path.realpath(__file__)), env=dict(os.environ, ANSIBLE_CONFIG=os.path.join(tmpPath,"ansible.cfg")))
+      p.communicate()
+      if p.returncode != 0:
+        raise Exception("Error when executing ansible")
+    except Exception as e:
+      #shutil.rmtree(tmpPath)
+      raise(e)
+    #shutil.rmtree(tmpPath)
     
   @staticmethod
   def parseArgs(rawArgs):
@@ -97,18 +170,26 @@ class CmdLine:
     installParser = rootSubparsers.add_parser('install', help='install files')
     installParser.add_argument('--parts','-p', help='Parts to install', nargs="+", metavar=dirs, type=str, choices=dirs, default=dirs)
     installParser.add_argument('--verbose',"-v", help='Verbose mode', action='store_true')
+    installParser.add_argument('--dryrun',"-d", help='Dry run mode', action='store_true')
     
         # Parser for list command
-    installParser = rootSubparsers.add_parser('uninstall', help='uninstall files')
-    installParser.add_argument('--parts','-p', help='Parts to install', nargs="+", metavar=dirs, type=str, choices=dirs, default=dirs)
-    installParser.add_argument('--verbose',"-v", help='Verbose mode', action='store_true')
-    
+    uninstallParser = rootSubparsers.add_parser('uninstall', help='uninstall files')
+    uninstallParser.add_argument('--parts','-p', help='Parts to install', nargs="+", metavar=dirs, type=str, choices=dirs, default=dirs)
+    uninstallParser.add_argument('--verbose',"-v", help='Verbose mode', action='store_true')
+    uninstallParser.add_argument('--dryrun',"-d", help='Dry run mode', action='store_true')
+     
     return parser.parse_args(rawArgs[1:])
         
 if __name__ == "__main__":
   try:
+    res = distutils.spawn.find_executable("ansible")
+    if res is None:
+      raise Exception("Ansible not found please check your configuration")
     args = CmdLine.parseArgs(sys.argv)
     CmdLine.performAction(args.function, args)
+    if(BinaryQuestion("Do you want to reboot your computer now for changes to take effect?",
+                           "Enter a Y or a N", "N").ask() == True):
+      os.system("reboot now")
     sys.exit()
   except Exception as e:
     sys.exit("An error occured: {0}".format(e))

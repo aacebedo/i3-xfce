@@ -17,8 +17,14 @@
 
     - file: path=/home/{{remote_user}}/.conky state=absent
     
-    - file: path=/home/{{remote_user}}/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml state=absent
-    - file: path=/home/{{remote_user}}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml state=absent
+    - lineinfile: dest=/home/{{remote_user}}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml regexp=".*notify-location.*" line="<property name=\"notify-location\" type=\"uint\" value=\"3\"/>" 
+    - lineinfile: dest=/home/{{remote_user}}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml regexp=".*theme.*" line="<property name=\"theme\" type=\"string\" value=\"Greybird\"/>"
+    - lineinfile: dest=/home/{{remote_user}}/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml regexp=".*name=\"ThemeName\".*" line="<property name=\"ThemeName\" type=\"string\" value=\"Greybird\"/>"
+    - lineinfile: dest=/home/{{remote_user}}/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml regexp=".*name=\"IconThemeName\".*" line="<property name=\"IconThemeName\" type=\"string\" value=\"elementary-xfce\"/>"
+    
+    - lineinfile: dest=/etc/lightdm/lightdm-gtk-greeter.conf regexp="theme-name.*" line="theme-name=Greybird" state=absent
+    - lineinfile: dest=/etc/lightdm/lightdm-gtk-greeter.conf regexp="icon-theme-name.*" state=absent
+    - lineinfile: dest=/etc/lightdm/lightdm-gtk-greeter.conf regexp="background.*" state=absent 
     
     - file: path=/home/{{remote_user}}/.fonts/{{ item }} state=absent
       with_fileglob:
