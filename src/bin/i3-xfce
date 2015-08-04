@@ -35,6 +35,9 @@ try:
 except Exception as e:
   sys.exit("Python-yaml is missing")
 
+INSTALLDIR = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)),".."))
+ROLESDIR = os.path.abspath(os.path.join(INSTALLDIR,"share","i3-xfce","roles"))
+
 class RegexedQuestion:
     _question = ""
     _regex = ""
@@ -69,11 +72,11 @@ class BinaryQuestion(RegexedQuestion):
     _question = ""
     _options = None
     
-    def __init__(self,question,errorMsg,logger,default = None):
+    def __init__(self,question,errorMsg,default = None):
         if type(default) is str and re.match("Y|y|N|n",default):
             self._default = default
             
-        RegexedQuestion.__init__(self,question+" Y/N",errorMsg,logger,"Y|y|N|n",default)
+        RegexedQuestion.__init__(self,question+" Y/N",errorMsg,"Y|y|N|n",default)
         self._options = {
                          "Y" : self.ok,
                          "y" : self.ok,
@@ -138,7 +141,7 @@ class CmdLine:
     playbookFile = open(playbookPath,'w')
     playbookFile.write(yaml.dump(playbook,default_flow_style=False,explicit_start=True))
     playbookFile.close()
-    rolesPath = os.path.join(os.path.dirname(os.path.realpath(__file__)),"roles")
+    rolesPath = os.path.join(ROLESDIR)
     
     ansibleConfig = open(os.path.join(tmpPath,"ansible.cfg"),"w+")
     ansibleConfig.write("[defaults]\r\n")
@@ -160,7 +163,7 @@ class CmdLine:
     
   @staticmethod
   def parseArgs(rawArgs):
-    rolesPath = os.path.join(os.path.dirname(os.path.realpath(__file__)),"roles")
+    rolesPath = os.path.join(ROLESDIR)
     dirs = os.listdir(rolesPath)
     # Create main parser
     parser = argparse.ArgumentParser(prog="i3-xfce", description='i3-xfce-installer.')
