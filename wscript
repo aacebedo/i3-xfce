@@ -83,9 +83,9 @@ def configure(ctx):
     else:
     	ctx.env.TEMPLATES = ctx.options.templates.split(",")
     	
-    if not checkVersion("Python","python --version","Python ([0-9\.]*)","2.7.0",0):
+    if not checkVersion("Python","python --version","Python ([0-9\.]*)","2.7.9",0):
       ctx.fatal("Missing requirements. Installation will not continue.")
-    if not checkVersion("Ansible","ansible --version","ansible ([0-9\.]*)","1.9.0",0):
+    if not checkVersion("Ansible","ansible --version","ansible ([0-9\.]*)","1.9.2",0):
       ctx.fatal("Missing requirements. Installation will not continue.")
     if not checkPythonModule("enum"):
       ctx.fatal("Missing requirements. Installation will not continue.")
