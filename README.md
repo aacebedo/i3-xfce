@@ -4,22 +4,32 @@ the builtin windows manager (xfwm4) and disable the builtin desktop (xfdesktop).
 
 ### Dependencies
 - Ubuntu 15.04
-- Ansible 1.9 (www.ansible.com)
+- Ansible >=1.9.0 (www.ansible.com)
+- Python >=2.7.0
 - Python-YAML
+- Python-enum34
+
+### Install and configure
+$> ./waf configure --prefix=<install path>
+$> ./waf install
 
 ### Usage
 ##### Install all
 $> ./i3-xfce install
 ##### Install parts
 $> ./i3-xfce install -p <parts>
-##### Install all
+##### Install help
 $> ./i3-xfce install -h
 ##### Uninstall all
 $> ./i3-xfce uninstall
 ##### Uninstall parts
 $> ./i3-xfce uninstall -p <parts>
-##### Uninstall all
+##### Uninstall help
 $> ./i3-xfce uninstall -h
+
+### PPA
+PPA for ubuntu is available here:
+ppa:aacebedo/i3-xfce-stable 
 
 ### Screenshots
 ![alt tag](https://raw.github.com/aacebedo/i3-xfce/master/screenshot.png)
