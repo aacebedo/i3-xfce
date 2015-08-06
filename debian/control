@@ -1,5 +1,5 @@
 Source: i3-xfce
-Section: utils
+section: utils
 Priority: optional
 Maintainer: Alexandre Acebedo <alexandre.acebedo@gmail.com>
 Build-Depends: debhelper (>= 9), python (>= 2.7.0), python-yaml, python-enum34, ansible (>= 1.9.0)
