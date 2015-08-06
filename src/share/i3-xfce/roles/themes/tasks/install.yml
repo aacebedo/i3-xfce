@@ -1,0 +1,43 @@
+    - apt_repository: repo='{{item}}' state=present update_cache=true
+      with_items: 
+       - ppa:numix/ppa
+
+    - apt: pkg={{item}} force=yes state=installed  
+      with_items:
+       - numix-plymouth-theme
+       - numix-folders
+       - fonts-powerline
+       - numix-gtk-theme
+       - numix-icon-theme-circle
+       - compton
+       - feh
+       - conky
+
+    - file: path=/home/{{remote_user}}/.i3 state=directory    
+    - copy: src={{item}} dest=/home/{{remote_user}}/.i3/ owner={{remote_user}} group={{remote_user}} mode='u=rw'
+      with_fileglob:
+       - i3/*
+
+    - file: path=/home/{{remote_user}}/.conky state=directory    
+    - copy: src={{item}} dest=/home/{{remote_user}}/.conky/ owner={{remote_user}} group={{remote_user}} mode='u=rw'
+      with_fileglob:
+       - conky/*
+    
+    - file: path=/home/{{remote_user}}/.config/xfce4/xfconf/xfce-perchannel-xml state=directory
+
+    - shell: cp -n /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml /home/{{remote_user}}/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml
+    - file: path=/home/{{remote_user}}/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml owner={{remote_user}}  group={{remote_user}} mode='u=rw'
+    - lineinfile: dest=/home/{{remote_user}}/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml regexp=".*name=\"ThemeName\".*" line="<property name=\"ThemeName\" type=\"string\" value=\"Numix\"/>"
+    - lineinfile: dest=/home/{{remote_user}}/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml regexp=".*name=\"IconThemeName\".*" line="<property name=\"IconThemeName\" type=\"string\" value=\"Numix-Circle\"/>"
+    
+    - shell: cp -n /etc/xdg/xdg-xubuntu/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml /home/{{remote_user}}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml
+    - copy: src=xfce/xfce4-notifyd.xml dest=/home/{{remote_user}}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml owner={{remote_user}}  group={{remote_user}} mode='u=rw'
+    
+    - lineinfile: dest=/etc/lightdm/lightdm-gtk-greeter.conf line='[greeter]'
+    - lineinfile: dest=/etc/lightdm/lightdm-gtk-greeter.conf regexp="^theme-name.*" line='theme-name=Numix' insertafter="[greeter]"  state=present
+    - lineinfile: dest=/etc/lightdm/lightdm-gtk-greeter.conf regexp="^icon-theme-name.*" line='icon-theme-name=Numix-Circle' insertafter="[greeter]" state=present
+    - lineinfile: dest=/etc/lightdm/lightdm-gtk-greeter.conf regexp="^background.*" line='background=/lib/plymouth/themes/numix/wallpaper.png' insertafter="[greeter]" state=present
+        
+    - copy: src={{item}} dest=/home/{{remote_user}}/.fonts/ owner={{remote_user}} group={{remote_user}} mode='u=rw'
+      with_fileglob:
+       - fonts/*
