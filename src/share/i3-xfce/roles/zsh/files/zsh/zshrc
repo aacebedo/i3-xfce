@@ -47,7 +47,7 @@ ZSH_THEME="agnoster"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 #plugins=(git cp colorize colored-man compleat copyfiles copydir dircycle dipersist extract per-directory-history screen fasd debian)
 
-plugins=(git fasd cp colorized colored-man compleat copyfiles copydir extract screen debian history-substring-search zsh-syntax-highlighting autojump)
+plugins=(git fasd cp colorized colored-man compleat copyfiles copydir extract screen debian history-substring-search zsh-syntax-highlighting gitfast git-extras git-flow jsontools python vagrant)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -78,6 +78,5 @@ function le()
 ### Added by the Heroku Toolbelt
 export PATH="/usr/local/heroku/bin:$PATH"
 
-eval "$(thefuck-alias)"
 # You can use whatever you want as an alias, like for Mondays:
-eval "$(thefuck-alias FUCK)"
+eval "$(thefuck -alias fuck)"
