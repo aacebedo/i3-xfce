@@ -25,7 +25,7 @@ override_utf8_locale yes
 use_spacer yes
 text_buffer_size 256
 own_window yes
-own_window_class Conky
+own_window_class conky
 own_window_type override
 own_window_transparent yes
 own_window_hints undecorated,below,sticky,skip_taskbar,skip_pager
