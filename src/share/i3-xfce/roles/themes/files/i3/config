@@ -177,6 +177,6 @@ client.unfocused        #999999 #999999 #EEEEEE #2D2D2D
 client.urgent           #555555 #555555 #FFFFFF #2D2D2D
 
 
-exec --no-startup-id feh --bg-fill ~/wallpapers/wallpaper.jpg
+exec --no-startup-id feh --bg-fill /usr/share/backgrounds/Numix_Lightbulb.png
 exec --no-startup-id conky -c ~/.conky/conkyrc_right
 exec --no-startup-id conky -c ~/.conky/conkyrc_left
