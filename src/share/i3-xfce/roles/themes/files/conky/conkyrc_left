@@ -29,13 +29,13 @@ override_utf8_locale yes
 use_spacer yes
 text_buffer_size 256
 own_window yes
-own_window_class Conky
+own_window_class conky
 own_window_type override
 draw_graph_borders yes
 
 TEXT
 
-${font Droid Sans:size=20}${color #D71700}ENIF${color Ivory}                        Ubuntu ${font openlogos:size=20}u
+${font Droid Sans:size=20}${color #D71700}${nodename]${color Ivory}                        Ubuntu ${font openlogos:size=20}u
 
 ${voffset -120}
 ${color white}

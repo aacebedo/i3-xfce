@@ -9,6 +9,7 @@
        - fonts-powerline
        - numix-gtk-theme
        - numix-icon-theme-circle
+       - numix-wallpaper-lightbulb
        - compton
        - feh
        - conky
@@ -23,6 +24,8 @@
       with_fileglob:
        - conky/*
     
+    - copy: src=compton/compton.conf dest=/home/{{remote_user}}/.compton.conf owner={{remote_user}} group={{remote_user}} mode='u=rw'
+    
     - file: path=/home/{{remote_user}}/.config/xfce4/xfconf/xfce-perchannel-xml state=directory
 
     - shell: cp -n /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml /home/{{remote_user}}/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml
@@ -36,7 +39,8 @@
     - lineinfile: dest=/etc/lightdm/lightdm-gtk-greeter.conf line='[greeter]'
     - lineinfile: dest=/etc/lightdm/lightdm-gtk-greeter.conf regexp="^theme-name.*" line='theme-name=Numix' insertafter="[greeter]"  state=present
     - lineinfile: dest=/etc/lightdm/lightdm-gtk-greeter.conf regexp="^icon-theme-name.*" line='icon-theme-name=Numix-Circle' insertafter="[greeter]" state=present
-    - lineinfile: dest=/etc/lightdm/lightdm-gtk-greeter.conf regexp="^background.*" line='background=/lib/plymouth/themes/numix/wallpaper.png' insertafter="[greeter]" state=present
+    - lineinfile: dest=/etc/lightdm/lightdm-gtk-greeter.conf regexp="^background.*" line='background=/usr/share/backgrounds/Numix_Lightbulb.png' insertafter="[greeter]" state=present
+    - lineinfile: dest=/etc/lightdm/lightdm-gtk-greeter.conf regexp="^user-background.*" line='user-background = false' insertafter="[greeter]" state=present
         
     - copy: src={{item}} dest=/home/{{remote_user}}/.fonts/ owner={{remote_user}} group={{remote_user}} mode='u=rw'
       with_fileglob:
