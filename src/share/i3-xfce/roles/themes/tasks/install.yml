@@ -3,8 +3,7 @@
        - ppa:numix/ppa
 
     - apt: pkg={{item}} force=yes state=installed  
-      with_items:
-       - numix-plymouth-theme
+      with_items: 
        - numix-folders
        - fonts-powerline
        - numix-gtk-theme
@@ -14,6 +13,10 @@
        - feh
        - conky
 
+    - copy: src={{item}} dest=/home/{{remote_user}}/.config/autostart/ owner={{remote_user}} group={{remote_user}} mode='u=rw'
+      with_fileglob:
+       - autostart/*
+       
     - file: path=/home/{{remote_user}}/.i3 state=directory    
     - copy: src={{item}} dest=/home/{{remote_user}}/.i3/ owner={{remote_user}} group={{remote_user}} mode='u=rw'
       with_fileglob:

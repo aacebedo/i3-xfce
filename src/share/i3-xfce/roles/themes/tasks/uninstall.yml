@@ -28,7 +28,10 @@
     - lineinfile: dest=/etc/lightdm/lightdm-gtk-greeter.conf regexp="^background.*" state=absent
     - lineinfile: dest=/etc/lightdm/lightdm-gtk-greeter.conf regexp="^user-background.*" state=absent
     
-    
+    - file: src={{item}} dest=/home/{{remote_user}}/.config/autostart/ state=absent
+      with_fileglob:
+       - autostart/*
+       
     - file: path=/home/{{remote_user}}/.fonts/{{ item }} state=absent
       with_fileglob:
        - fonts/*
