@@ -1,6 +1,6 @@
     - apt: pkg={{item}} force=yes state=installed  
       with_items:
-       - i3
+       - i3-wm
 
     - copy: src={{item}} dest=/home/{{remote_user}}/.config/autostart/ owner={{remote_user}} group={{remote_user}} mode='u=rw'
       with_fileglob:
