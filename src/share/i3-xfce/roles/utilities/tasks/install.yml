@@ -2,15 +2,16 @@
   
     - apt_repository: repo='{{item}}' state=present update_cache=true
       with_items: 
-       - deb http://apt.mucommander.com stable main non-free contrib
        - deb http://dl.google.com/linux/chrome/deb/ stable main
+       - ppa:aacebedo/libi3ipc-glib
+       - ppa:aacebedo/xfce4-i3-workspaces-plugin
+       - ppa:aacebedo/fasd
  
     - apt: pkg={{item}} force=yes state=installed  
       with_items:
        - aptitude
        - docker.io
        - vim
-       - mucommander
        - python-dev
        - conky
        - wget
@@ -24,11 +25,10 @@
        - python-software-properties
        - git-flow
        - dtrx
+       - libi3ipc-glib
+       - xfce4-i3-workspaces-plugin
+       - fasd
    
-    - get_url: url=https://github.com/clvv/fasd/archive/1.0.1.tar.gz dest=/tmp/fasd.tar.gz
-    - unarchive: src=/tmp/fasd.tar.gz dest=/tmp/
-    - shell: make install chdir=/tmp/fasd-1.0.1
-
     - get_url: url=https://github.com/enkore/j4-dmenu-desktop/archive/r2.12.tar.gz dest=/tmp/j4-desktop-menu.tar.gz
     - unarchive: src=/tmp/j4-desktop-menu.tar.gz dest=/tmp/
     - shell: cmake ./ && make install chdir=/tmp/j4-dmenu-desktop-r2.12
@@ -39,8 +39,8 @@
        - psutil
        - thefuck
        - i3-py
+       - quickswitch-i3
+       - cheat
        
     - file: path=/home/{{remote_user}}/.i3 state=directory    
-    - git: repo=https://github.com/proxypoke/quickswitch-for-i3.git dest=/tmp/quickswitch
-    - shell: cp /tmp/quickswitch/quickswitch.py /home/{{remote_user}}/.i3/quickswitch.py
-    - file: path=/home/{{remote_user}}/.i3/quickswitch.py mode='u+rwx' owner={{remote_user}}
+    
