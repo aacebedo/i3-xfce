@@ -40,7 +40,4 @@
        - thefuck
        - i3-py
        - quickswitch-i3
-       - cheat
-       
-    - file: path=/home/{{remote_user}}/.i3 state=directory    
-    
+       - cheat    
