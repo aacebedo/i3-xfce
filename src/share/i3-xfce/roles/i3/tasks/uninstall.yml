@@ -1,6 +1,6 @@
     - apt: pkg={{item}} force=yes state=absent  
       with_items:
-       - i3
+       - i3-wm
 
     - file: src={{item}} dest=/home/{{remote_user}}/.config/autostart/ state=absent
       with_fileglob:

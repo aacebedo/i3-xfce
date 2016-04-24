@@ -1,12 +1,16 @@
-background yes
+ckground yes
 use_xft yes
 xftfont 123:size=8
 xftalpha 0.1
 update_interval 0.5
 total_run_times 0
+own_window yes
+own_window_type normal
+own_window_transparent yes
+own_window_hints undecorated,below,sticky,skip_taskbar,skip_pager
 double_buffer yes
 minimum_size 350 5
-maximum_width 310
+maximum_width 350
 draw_shades no
 draw_outline no
 draw_borders no
@@ -27,21 +31,18 @@ text_buffer_size 256
 own_window yes
 own_window_class conky
 own_window_type override
-own_window_transparent yes
-own_window_hints undecorated,below,sticky,skip_taskbar,skip_pager
 draw_graph_borders yes
 
-
-TEXT 
+TEXT
 
 ${font Droid Sans:bold:size=10}${color #D71700}NETWORK STATS${color #CCCCCC}${hr 2}
-${font Droid Sans:bold:size=10}${color #FFFFFF}IP on wlan0: $alignr${color white}$font${addr wlan0}
-${font Droid Sans:bold:size=10}${color #FFFFFF}Down: $alignr${color white}$font${downspeed wlan0} kb/s
-${font Droid Sans:bold:size=10}${color #FFFFFF}Up: $alignr${color white}$font${upspeed wlan0} kb/s
-${font Droid Sans:bold:size=10}${color #FFFFFF}Downloaded: $alignr${color white}$font${totaldown wlan0}
-${font Droid Sans:bold:size=10}${color #FFFFFF}Uploaded: $alignr${color white}$font${totalup wlan0}
+${font Droid Sans:bold:size=10}${color #FFFFFF}IP on wlp4s0: $alignr${color white}$font${addr wlp4s0}
+${font Droid Sans:bold:size=10}${color #FFFFFF}Down: $alignr${color white}$font${downspeed wlp4s0} kb/s
+${font Droid Sans:bold:size=10}${color #FFFFFF}Up: $alignr${color white}$font${upspeed wlp4s0} kb/s
+${font Droid Sans:bold:size=10}${color #FFFFFF}Downloaded: $alignr${color white}$font${totaldown wlp4s0}
+${font Droid Sans:bold:size=10}${color #FFFFFF}Uploaded: $alignr${color white}$font${totalup wlp4s0}
 ${font Droid Sans:bold:size=10}${color #FFFFFF}Download graph:                     Upload graph:
-${color white}${downspeedgraph wlan0 32,155 FFFFFF FFFFFF} $alignr${upspeedgraph wlan0 32,155 FFFFFF FFFFFF}
+${color white}${downspeedgraph wlp4s0 32,155 FFFFFF FFFFFF} $alignr${upspeedgraph wlp4s0 32,155 FFFFFF FFFFFF}
   
 ${font Droid Sans:bold:size=10}${color #D71700}PORTS AND CONNECTIONS ${color #CCCCCC}${hr 2}
 ${color #FFFFFF}Port(s)        ${alignr}     #Connections
@@ -59,4 +60,3 @@ $font${color DimGray}$font${tcp_portmon 32768 61000 rhost 0} ${alignr} ${tcp_por
  ${tcp_portmon 32768 61000 rhost 2} ${alignr} ${tcp_portmon 32768 61000 rservice 2}
  ${tcp_portmon 32768 61000 rhost 3} ${alignr} ${tcp_portmon 32768 61000 rservice 3}
  ${tcp_portmon 32768 61000 rhost 4} ${alignr} ${tcp_portmon 32768 61000 rservice 4}
-

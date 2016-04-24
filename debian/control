@@ -1,13 +1,13 @@
 Source: i3-xfce
 section: utils
 Priority: optional
-Maintainer: Alexandre Acebedo <alexandre.acebedo@gmail.com>
-Build-Depends: debhelper (>= 9), python (>= 2.7.0), python-yaml, python-enum34, ansible (>= 1.9.0)
+Maintainer: Alexandre Acebedo <alexandre@acebedo.fr>
+Build-Depends: debhelper (>= 9), python (>= 2.7.0), python-yaml, python-enum34
 Standards-Version: 3.9.5
 Homepage: http://www.github.com/aacebedo/i3-xfce
 
 Package: i3-xfce
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, python (>= 2.7.0), python-yaml, python-enum34, ansible (>= 1.9.0) 
+Depends: ${shlibs:Depends}, ${misc:Depends}, python (>= 2.7.0), python-yaml, python-enum34, ansible (>= 1.9.0), python-pip
 Description: A utility to integrate i3 wm in XFCE
  This program installs config files, themes and utilities to integrate i3 into XFCE. 

@@ -121,7 +121,7 @@ class CmdLine:
     CmdLine.performAction(Action.UNINSTALL, args)
   
   @staticmethod
-  def performAction(action,args):
+  def executeAction(action,args):
     #Get the real user behind the sudo
     username = os.getenv("SUDO_USER")
 
@@ -157,9 +157,7 @@ class CmdLine:
       if p.returncode != 0:
         raise Exception("Error when executing ansible")
     except Exception as e:
-      #shutil.rmtree(tmpPath)
       raise(e)
-    #shutil.rmtree(tmpPath)
     
   @staticmethod
   def parseArgs(rawArgs):
@@ -189,7 +187,7 @@ if __name__ == "__main__":
     if res is None:
       raise Exception("Ansible not found please check your configuration")
     args = CmdLine.parseArgs(sys.argv)
-    CmdLine.performAction(args.function, args)
+    CmdLine.executeAction(args.function, args)
     if(BinaryQuestion("Do you want to reboot your computer now for changes to take effect?",
                            "Enter a Y or a N", "N").ask() == True):
       os.system("reboot now")
