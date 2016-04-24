@@ -1,9 +1,11 @@
 # i3-xfce
 This tool will install packages and scripts in order to use i3 with xfce. Amongst other things, it replaces
 the builtin windows manager (xfwm4) and disable the builtin desktop (xfdesktop).
+It has been designed to work with deb packages system and more specifically with ubuntu flavor.
+It has been successfully tested with ubuntu 15.04/15.10/16.04 and xubuntu 15.04/15.10/16.04.
 
 ### Dependencies
-- Ubuntu 15.04
+- *Ubuntu 15.04/15.10/16.04
 - Ansible >=1.9.0 (www.ansible.com)
 - Python >=2.7.0
 - Python-YAML
