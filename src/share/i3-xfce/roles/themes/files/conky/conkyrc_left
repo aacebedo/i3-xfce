@@ -32,7 +32,7 @@ draw_graph_borders yes
 
 TEXT
 
-${font Droid Sans:size=20}${color #D71700}${nodename}${color Ivory}                        Ubuntu ${font openlogos:size=20}u
+${font Droid Sans:size=20}${color #D71700}${nodename}${color Ivory}          Ubuntu ${font openlogos:size=20}u
 
 ${voffset -120}
 ${color white}

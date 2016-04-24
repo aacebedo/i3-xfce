@@ -12,6 +12,7 @@
        - compton
        - feh
        - conky
+       - xfce4-terminal
 
     - copy: src={{item}} dest=/home/{{remote_user}}/.config/autostart/ owner={{remote_user}} group={{remote_user}} mode='u=rw'
       with_fileglob:
@@ -58,6 +59,6 @@
     - file: path=/home/{{remote_user}}/.config recurse='yes' owner={{remote_user}} group={{remote_user}} mode='u=rwX'
 
     - copy: src=xfce/Numix_Lightbulb.png dest=/usr/share/backgrounds/Numix_Lightbulb.png  owner=root  group=root mode='a=r'
-    - file: path=/usr/share/backgrounds/Numix_Lightbuld.png owner={{remote_user}} group={{remote_user}} mode='u=rw'
+    - file: path=/usr/share/backgrounds/Numix_Lightbulb.png owner={{remote_user}} group={{remote_user}} mode='u=rw'
 
 
