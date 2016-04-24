@@ -171,11 +171,10 @@ bindsym $mod+r mode "resize"
 bindsym $mod+End exec  ~/.i3/quickswitch.py -e
 bindsym $mod+Home exec  ~/.i3/quickswitch.py --dmenu="dmenu.xft -b -i -l 20 -nb '#000000' -nf '#CFCFCF' -sb '#D53C0A'  -sf '#FFFFFF' -fn 'Droid Sans:pixelsize=13'"
 
-client.focused          #2D2D2D #2D2D2D #EEEEEE #2D2D2D
+client.focused          #bc3220 #bc3220 #EEEEEE #2D2D2D
 client.focused_inactive #999999 #999999 #EEEEEE #2D2D2D
 client.unfocused        #999999 #999999 #EEEEEE #2D2D2D 
 client.urgent           #555555 #555555 #FFFFFF #2D2D2D
-
 
 exec --no-startup-id feh --bg-fill /usr/share/backgrounds/Numix_Lightbulb.png
 exec --no-startup-id conky -c ~/.conky/conkyrc_right
