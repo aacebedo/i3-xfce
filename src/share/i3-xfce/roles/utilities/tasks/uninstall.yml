@@ -21,6 +21,7 @@
     
     - pip: name={{item}} state=absent
       with_items:
+       - albert
        - pathlib
        - psutil
        - thefuck
