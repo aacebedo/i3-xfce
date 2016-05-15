@@ -25,7 +25,12 @@ import pwd
 import argparse
 import subprocess
 import uuid
+import time
+import signal
+import threading
 import distutils.spawn
+from functools import partial
+from progressbar import AnimatedMarker, Bar, ProgressBar, RotatingMarker, Timer
 try:
   import yaml
 except Exception as e:
@@ -102,63 +107,95 @@ class Action(StringifiedEnum):
   INSTALL = "install"
   UNINSTALL = "uninstall"
 
+class ExecutionProgressBar(threading.Thread):
+
+  def __init__(self):
+    threading.Thread.__init__(self)
+    self.running = False
+
+  def run(self):
+    self.running = True
+    widgets = [Timer(), " - ", AnimatedMarker()]
+    pbar = ProgressBar(widgets=widgets)
+        
+    while self.running:
+      for i in pbar((i for i in range(sys.maxsize))):
+        time.sleep(0.1)
+        if not self.running:
+          return
+
+  def stop(self):
+    self.running = False
+
+
 class CmdLine:
+
+  def __init__(self):
+    self.progress_bar = ExecutionProgressBar()
+
   @staticmethod
-  def generateTempDir():
-    tmpPath = os.path.join("/tmp",str(uuid.uuid1()));
+  def generate_temp_dir():
+    tmp_path = os.path.join("/tmp", str(uuid.uuid1()));
     exists = True
     while exists:
-      exists = os.path.exists(tmpPath)
-    os.makedirs(tmpPath)
-    return tmpPath
+      exists = os.path.exists(tmp_path)
+    os.makedirs(tmp_path)
+    return tmp_path
   
   @staticmethod
   def install(args):
-    CmdLine.performAction(Action.INSTALL, args)
+    CmdLine.perform_action(Action.INSTALL, args)
     
   @staticmethod
-  def uninstall(action,args):
-    CmdLine.performAction(Action.UNINSTALL, args)
+  def uninstall(action, args):
+    CmdLine.perform_action(Action.UNINSTALL, args)
   
-  @staticmethod
-  def executeAction(action,args):
-    #Get the real user behind the sudo
+  def execute_action(self, action, args):
+    # Get the real user behind the sudo
     username = os.getenv("SUDO_USER")
 
     if(username == None):
       raise Exception("This program must be ran as root")
     
-    additional_options = ""
+    additional_options = []
     if args.verbose != False:
-      additional_options += " -vvv"
+      additional_options.append("-vvv")
     if args.dryrun != False:
-      additional_options += " --check"
-    tmpPath = CmdLine.generateTempDir()
-    playbookPath = os.path.join(tmpPath,"i3-xfce.playbook")
+      additional_options.append("--check")
+    tmp_path = CmdLine.generate_temp_dir()
+    playbook_path = os.path.join(tmp_path, "i3-xfce.playbook")
     playbook = [{}]
     playbook[0]["hosts"] = "all"
     playbook[0]["roles"] = args.parts
-    playbookFile = open(playbookPath,'w')
-    playbookFile.write(yaml.dump(playbook,default_flow_style=False,explicit_start=True))
-    playbookFile.close()
-    rolesPath = os.path.join(ROLESDIR)
+    playbook_file = open(playbook_path, 'w')
+    playbook_file.write(yaml.dump(playbook, default_flow_style=False, explicit_start=True))
+    playbook_file.close()
+    roles_path = os.path.join(ROLESDIR)
     
-    ansibleConfig = open(os.path.join(tmpPath,"ansible.cfg"),"w+")
-    ansibleConfig.write("[defaults]\r\n")
-    ansibleConfig.write("display_skipped_hosts=False\r\n")
-    ansibleConfig.write("roles_path={0}".format(rolesPath))
-    ansibleConfig.close()
-    
-    command = ['ansible-playbook', '-i', '"localhost,"', '-e', 'remote_user={}'.format(username), 'action={0}'.format(str(action), '-c', 'local', playbookPath, additional_options]
-    
+    ansible_config = open(os.path.join(tmp_path, "ansible.cfg"), "w+")
+    ansible_config.write("[defaults]\r\n")
+    ansible_config.write("display_skipped_hosts=False\r\n")
+    ansible_config.write("roles_path={0}".format(roles_path))
+    ansible_config.close()
+    command = []
+    if len(additional_options) != 0 :
+      command = ['ansible-playbook', '-i', 'localhost,', '-e', 'remote_user={}'.format(username), '-e', 'action={}'.format(str(action)), " ".join(additional_options), '-c', 'local', playbook_path]
+    else:
+      command = ['ansible-playbook', '-i', 'localhost,', '-e', 'remote_user={}'.format(username), '-e', 'action={}'.format(str(action)), '-c', 'local', playbook_path]
+
     try:
       p = None
       if args.verbose:
-        p = subprocess.Popen(command, stderr=subprocess.PIPE, cwd=os.path.dirname(os.path.realpath(__file__)), env=dict(os.environ, ANSIBLE_CONFIG=os.path.join(tmpPath,"ansible.cfg")))
+        print("Running command: {}".format(" ".join(command)))
+        p = subprocess.Popen(command, cwd=os.path.dirname(os.path.realpath(__file__)), env=dict(os.environ, ANSIBLE_CONFIG=os.path.join(tmp_path, "ansible.cfg")))
       else:
-        p = subprocess.Popen(command, stderr=subprocess.PIPE, stdout=subprocess.PIPE, cwd=os.path.dirname(os.path.realpath(__file__)), env=dict(os.environ, ANSIBLE_CONFIG=os.path.join(tmpPath,"ansible.cfg")))
-    
+        print("Running command: {}".format(" ".join(command)))
+        p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=os.path.dirname(os.path.realpath(__file__)), env=dict(os.environ, ANSIBLE_CONFIG=os.path.join(tmp_path, "ansible.cfg")))
+
+      self.progress_bar.start()
       p.communicate()
+      self.progress_bar.stop()
+      self.progress_bar.join()
       if p.returncode != 0:
         if args.verbose:
           raise Exception("Error when executing ansible. Check the ansible logs.")
@@ -188,14 +225,21 @@ class CmdLine:
     uninstallParser.add_argument('--dryrun',"-d", help='Dry run mode', action='store_true')
      
     return parser.parse_args(rawArgs[1:])
-        
+
+  def signal_handler(self, signal, frame):
+    self.progress_bar.stop()
+    self.progress_bar.join()
+    sys.exit(0)
+
 if __name__ == "__main__":
   try:
     res = distutils.spawn.find_executable("ansible")
     if res is None:
       raise Exception("Ansible not found please check your configuration")
-    args = CmdLine.parseArgs(sys.argv)
-    CmdLine.executeAction(args.function, args)
+    cmdline = CmdLine()
+    signal.signal(signal.SIGINT, partial(CmdLine.signal_handler, cmdline))
+    args = cmdline.parse_args(sys.argv)
+    cmdline.execute_action(args.function, args)
     if(BinaryQuestion("Do you want to reboot your computer now for changes to take effect?",
                            "Enter a Y or a N", "N").ask() == True):
       os.system("reboot now")
