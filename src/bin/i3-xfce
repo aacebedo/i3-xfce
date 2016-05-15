@@ -30,15 +30,18 @@ import signal
 import threading
 import distutils.spawn
 from functools import partial
-from progressbar import AnimatedMarker, Bar, ProgressBar, RotatingMarker, Timer
+try:
+  from progressbar import AnimatedMarker, Bar, ProgressBar, RotatingMarker, Timer
+except Exception as e:
+  sys.exit("python3-progressbar is missing")
 try:
   import yaml
 except Exception as e:
-  sys.exit("Python-yaml is missing")
+  sys.exit("python3-yaml is missing")
 try:
   from enum import *
 except Exception as e:
-  sys.exit("Python-yaml is missing")
+  sys.exit("python3-enum is missing")
 
 INSTALLDIR = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), ".."))
 ROLESDIR = os.path.abspath(os.path.join(INSTALLDIR, "share", "i3-xfce", "roles"))

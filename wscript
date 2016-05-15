@@ -91,6 +91,8 @@ def configure(ctx):
       ctx.fatal("Missing requirements. Installation will not continue.")
     if not checkPythonModule("yaml"):
       ctx.fatal("Missing requirements. Installation will not continue.")
+    if not checkPythonModule("progressbar"):
+      ctx.fatal("Missing requirements. Installation will not continue.")
       
 
 def build(ctx):
