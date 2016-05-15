@@ -1,3 +1,28 @@
+i3-xfce (0.4.3-0) stable; urgency=low
+
+  * Fixed dependencies
+
+ -- Alexandre Acebedo <alexandre@acebedo.fr>  Tue, 15 May 2016 16:40:42 +0200
+
+
+i3-xfce (0.4.2-1) stable; urgency=low
+
+  * Fixed dependencies
+
+ -- Alexandre Acebedo <alexandre@acebedo.fr>  Tue, 15 May 2016 16:40:42 +0200
+
+i3-xfce (0.4.2-0) stable; urgency=low
+
+  * Fixed dependencies
+
+ -- Alexandre Acebedo <alexandre@acebedo.fr>  Tue, 15 May 2016 16:40:42 +0200
+
+i3-xfce (0.4.1-0) stable; urgency=low
+
+  * Fixed dependencies
+
+ -- Alexandre Acebedo <alexandre@acebedo.fr>  Tue, 15 May 2016 16:40:42 +0200
+ 
 i3-xfce (0.4-1) stable; urgency=low
 
   * Solved #1
