@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 ##########################################################################
 # i3-xfce
@@ -149,13 +149,21 @@ class CmdLine:
     ansibleConfig.write("roles_path={0}".format(rolesPath))
     ansibleConfig.close()
     
-    command = 'ansible-playbook -i "localhost," -e "remote_user={0} action={1}" -c local {2} {3}'.format(username,str(action), playbookPath,additional_options)
+    command = ['ansible-playbook', '-i', '"localhost,"', '-e', 'remote_user={}'.format(username), 'action={0}'.format(str(action), '-c', 'local', playbookPath, additional_options]
     
     try:
-      p = subprocess.Popen(command, shell=True, stderr=subprocess.PIPE, cwd=os.path.dirname(os.path.realpath(__file__)), env=dict(os.environ, ANSIBLE_CONFIG=os.path.join(tmpPath,"ansible.cfg")))
+      p = None
+      if args.verbose:
+        p = subprocess.Popen(command, stderr=subprocess.PIPE, cwd=os.path.dirname(os.path.realpath(__file__)), env=dict(os.environ, ANSIBLE_CONFIG=os.path.join(tmpPath,"ansible.cfg")))
+      else:
+        p = subprocess.Popen(command, stderr=subprocess.PIPE, stdout=subprocess.PIPE, cwd=os.path.dirname(os.path.realpath(__file__)), env=dict(os.environ, ANSIBLE_CONFIG=os.path.join(tmpPath,"ansible.cfg")))
+    
       p.communicate()
       if p.returncode != 0:
-        raise Exception("Error when executing ansible")
+        if args.verbose:
+          raise Exception("Error when executing ansible. Check the ansible logs.")
+        else:
+          raise Exception("Error when executing ansible. Run i3-xfce again with -v ooption.")
     except Exception as e:
       raise(e)
     
@@ -193,4 +201,4 @@ if __name__ == "__main__":
       os.system("reboot now")
     sys.exit()
   except Exception as e:
-    sys.exit("An error occured: {0}".format(e))
+    sys.exit(e)
