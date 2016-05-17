@@ -29,6 +29,7 @@ import time
 import signal
 import threading
 import distutils.spawn
+from enum import *
 from functools import partial
 try:
   from progressbar import AnimatedMarker, Bar, ProgressBar, RotatingMarker, Timer
@@ -38,10 +39,7 @@ try:
   import yaml
 except Exception as e:
   sys.exit("python3-yaml is missing")
-try:
-  from enum import *
-except Exception as e:
-  sys.exit("python3-enum is missing")
+
 
 INSTALLDIR = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), ".."))
 ROLESDIR = os.path.abspath(os.path.join(INSTALLDIR, "share", "i3-xfce", "roles"))
@@ -229,6 +227,23 @@ class CmdLine:
     uninstall_parser.add_argument('--dryrun', "-d", help='Dry run mode', action='store_true')
      
     return parser.parse_args(rawArgs[1:])
+  
+  @staticmethod
+  def main():
+    try:
+      res = distutils.spawn.find_executable("ansible")
+      if res is None:
+        raise Exception("Ansible not found please check your configuration")
+      cmdline = CmdLine()
+      signal.signal(signal.SIGINT, partial(CmdLine.signal_handler, cmdline))
+      args = cmdline.parse_args(sys.argv)
+      cmdline.execute_action(args.function, args)
+      if(BinaryQuestion("Do you want to reboot your computer now for changes to take effect?",
+                             "Enter a Y or a N", "N").ask() == True):
+        os.system("reboot now")
+      sys.exit()
+    except Exception as e:
+      sys.exit(e)
 
   def signal_handler(self, signal, frame):
     self.progress_bar.stop()
@@ -236,17 +251,4 @@ class CmdLine:
     sys.exit(0)
 
 if __name__ == "__main__":
-  try:
-    res = distutils.spawn.find_executable("ansible")
-    if res is None:
-      raise Exception("Ansible not found please check your configuration")
-    cmdline = CmdLine()
-    signal.signal(signal.SIGINT, partial(CmdLine.signal_handler, cmdline))
-    args = cmdline.parse_args(sys.argv)
-    cmdline.execute_action(args.function, args)
-    if(BinaryQuestion("Do you want to reboot your computer now for changes to take effect?",
-                           "Enter a Y or a N", "N").ask() == True):
-      os.system("reboot now")
-    sys.exit()
-  except Exception as e:
-    sys.exit(e)
+    CmdLine.main()   
