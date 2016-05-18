@@ -1,0 +1,52 @@
+    - apt_key: url=https://dl-ssl.google.com/linux/linux_signing_key.pub state=present
+  
+    - apt_repository: repo='{{item}}' state=present update_cache=true
+      with_items: 
+       - deb http://dl.google.com/linux/chrome/deb/ stable main
+       - ppa:aacebedo/libi3ipc-glib
+       - ppa:aacebedo/xfce4-i3-workspaces-plugin
+       - ppa:aacebedo/fasd
+       - ppa:nilarimogard/webupd8
+ 
+    - apt: pkg={{item}} force=yes state=installed  
+      with_items:
+       - albert
+       - aptitude
+       - docker.io
+       - vim
+       - python-dev
+       - conky
+       - wget
+       - cmake
+       - build-essential
+       - google-chrome-beta
+       - python-pip
+       - dmenu
+       - feh  
+       - git
+       - python-software-properties
+       - git-flow
+       - dtrx
+       - libi3ipc-glib
+       - xfce4-i3-workspaces-plugin
+       - fasd
+   
+    - get_url: url=https://github.com/enkore/j4-dmenu-desktop/archive/r2.12.tar.gz dest=/tmp/j4-desktop-menu.tar.gz
+    - unarchive: src=/tmp/j4-desktop-menu.tar.gz dest=/tmp/
+    - shell: cmake ./ && make install chdir=/tmp/j4-dmenu-desktop-r2.12
+
+    - pip: name={{item}} state=present
+      with_items:
+       - pathlib
+       - psutil
+       - thefuck
+       - i3-py
+       - quickswitch-i3
+       - cheat
+
+    - file: dest=/home/{{remote_user}}/.config/albert owner={{remote_user}} group={{remote_user}} state=directory
+    - copy: src=albert.conf dest=/home/{{remote_user}}/.config/albert/albert.conf owner={{remote_user}} group={{remote_user}} mode='u=rw' 
+
+
+    - file: dest=/home/{{remote_user}}/.config recurse=true mode="u=rwX"
+    - copy: src=albert.conf dest=/home/{{remote_user}}/.config/albert/albert.conf owner={{remote_user}} group={{remote_user}} mode='u=rw' 

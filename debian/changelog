@@ -1,3 +1,10 @@
+i3-xfce (0.5.2-0) stable; urgency=low
+
+  * Removed waf files
+
+ -- Alexandre Acebedo <alexandre@acebedo.fr>  Tue, 15 May 2016 16:40:42 +0200
+
+
 i3-xfce (0.4.3-0) stable; urgency=low
 
   * Fixed dependencies

@@ -16,22 +16,25 @@ include /usr/share/dpkg/default.mk
 # package maintainers to append LDFLAGS
 #export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
 export PREFIX=/usr
+export PYTHONPATH:=$(PKG_INSTALL_DIR)/$(PYTHON_PKG_DIR)
 
 # main packaging script based on dh7 syntax
 %:
 	dh $@ 
 
 # debmake generated override targets
-# This is example for Cmake (See http://bugs.debian.org/641051 )
 
 override_dh_auto_configure:
-	./waf configure --prefix=/usr
+	python3 ./setup.py check
 	
 override_dh_auto_build:
-	./waf build
+	python3 ./setup.py build
 	
 override_dh_auto_install:
-	./waf install --destdir=$(CURDIR)/debian/i3-xfce
+	python3 ./setup.py install --prefix=$(CURDIR)/debian/i3-xfce
+	
+override_dh_auto_clean:
+	python3 ./setup.py clean -a
 
 
 
