@@ -7,8 +7,9 @@ It has been successfully tested with ubuntu 15.04/15.10/16.04 and xubuntu 15.04/
 ### Dependencies
 - *Ubuntu 15.04/15.10/16.04
 - Ansible >=1.9.0 (www.ansible.com)
-- Python >=3.0.0
-- Python-YAML
+- Python2 >=2.7.0
+- Python3 >=3.0.0
+- Python-yaml
 - Python-enum34
 - Python-progressbar
 
