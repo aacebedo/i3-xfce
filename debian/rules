@@ -22,16 +22,15 @@ export PREFIX=/usr
 	dh $@ 
 
 # debmake generated override targets
-# This is example for Cmake (See http://bugs.debian.org/641051 )
 
 override_dh_auto_configure:
-	./waf configure --prefix=/usr
+	./setup.py check
 	
 override_dh_auto_build:
-	./waf build
+	./setup.py build
 	
 override_dh_auto_install:
-	./waf install --destdir=$(CURDIR)/debian/i3-xfce
+	./setup.py install --prefix=$(CURDIR)/debian/i3-xfce
 
 
 

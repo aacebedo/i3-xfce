@@ -1,0 +1,37 @@
+    - apt_repository: repo='{{item}}' state=absent update_cache=true
+      with_items: 
+       - ppa:numix/ppa
+
+    - apt: pkg={{item}} force=yes state=absent  
+      with_items:
+       - numix-plymouth-theme
+       - numix-folders
+       - fonts-powerline
+       - numix-gtk-theme
+       - numix-icon-theme-circle
+       - numix-wallpaper-lightbulb
+       - compton
+       - feh
+       - conky
+
+    - file: path=/home/{{remote_user}}/.i3 state=absent
+
+    - file: path=/home/{{remote_user}}/.conky state=absent
+    
+    - lineinfile: dest=/home/{{remote_user}}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml regexp=".*notify-location.*" line="<property name=\"notify-location\" type=\"uint\" value=\"3\"/>" 
+    - lineinfile: dest=/home/{{remote_user}}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml regexp=".*theme.*" line="<property name=\"theme\" type=\"string\" value=\"Greybird\"/>"
+    - lineinfile: dest=/home/{{remote_user}}/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml regexp=".*name=\"ThemeName\".*" line="<property name=\"ThemeName\" type=\"string\" value=\"Greybird\"/>"
+    - lineinfile: dest=/home/{{remote_user}}/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml regexp=".*name=\"IconThemeName\".*" line="<property name=\"IconThemeName\" type=\"string\" value=\"elementary-xfce-dark\"/>"
+    
+    - lineinfile: dest=/etc/lightdm/lightdm-gtk-greeter.conf regexp="^theme-name.*" line="theme-name=Greybird" state=present
+    - lineinfile: dest=/etc/lightdm/lightdm-gtk-greeter.conf regexp="^icon-theme-name.*" line="icon-theme-name=elementary-xfce-dark"  state=present
+    - lineinfile: dest=/etc/lightdm/lightdm-gtk-greeter.conf regexp="^background.*" state=absent
+    - lineinfile: dest=/etc/lightdm/lightdm-gtk-greeter.conf regexp="^user-background.*" state=absent
+    
+    - file: src={{item}} dest=/home/{{remote_user}}/.config/autostart/ state=absent
+      with_fileglob:
+       - autostart/*
+       
+    - file: path=/home/{{remote_user}}/.fonts/{{ item }} state=absent
+      with_fileglob:
+       - fonts/*

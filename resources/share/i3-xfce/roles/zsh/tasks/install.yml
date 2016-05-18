@@ -1,0 +1,10 @@
+    - apt: pkg={{item}} force=yes state=installed  
+      with_items:
+       - zsh
+       - tree
+       - git
+       
+    - copy: src=zsh/zshrc dest=/home/{{remote_user}}/.zshrc owner={{remote_user}} group={{remote_user}} mode='u=rw'
+    - shell: chsh {{remote_user}} -s /bin/zsh
+    - git: repo=https://github.com/robbyrussell/oh-my-zsh.git dest=/home/{{remote_user}}/.oh-my-zsh
+    - file: path=/home/{{remote_user}}/.oh-my-zsh recurse=true owner={{remote_user}} group={{remote_user}}

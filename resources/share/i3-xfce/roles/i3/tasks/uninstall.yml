@@ -1,0 +1,11 @@
+    - apt: pkg={{item}} force=yes state=absent  
+      with_items:
+       - i3-wm
+
+    - file: src={{item}} dest=/home/{{remote_user}}/.config/autostart/ state=absent
+      with_fileglob:
+       - autostart/*
+
+    - file: path=/home/{{remote_user}}/.cache/sessions state=absent
+    - shell: cp /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-session.xml /home/{{remote_user}}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-session.xml
+    - lineinfile: dest=/usr/share/applications/xfce-wm-settings.desktop state=absent line="Hidden=true"
