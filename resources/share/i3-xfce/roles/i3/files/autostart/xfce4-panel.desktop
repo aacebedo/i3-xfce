@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Terminal=false
+Name=XFCE Panel
+Comment=Panel
+Exec=xfce4-panel --disable-wm-check
+OnlyShowIn=XFCE;
