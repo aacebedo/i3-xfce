@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# cfdnsupdater
+# i3-xfce
 # Copyright (c) 2015, Alexandre ACEBEDO, All rights reserved.
 #
 # This library is free software; you can redistribute it and/or
@@ -24,6 +24,8 @@ import pathlib
 import argparse
 import platform
 import os
+from git import repo
+import git
 import distutils
 try:
   from setuptools import setup, find_packages
@@ -56,13 +58,22 @@ def process_setup():
                     real_path = pathlib.Path(os.path.join(dname,fname,f)).relative_to("resources")                    
                     data_files.append((os.path.dirname(str(real_path)),[os.path.join("resources",str(real_path))]))
     
+    version = "0.0.0"
+    
+    if git.repo.fun.is_git_dir(os.path.join(os.path.dirname(os.path.realpath(__file__)),".git")):
+      repo = Repo(os.path.dirname(os.path.realpath(__file__)))
+      for tag in repo.tags:
+        if tag.commit == repo.head.commit:
+          version = tag.name
+          break
+        
     res = distutils.spawn.find_executable("ansible")
     if res is None:
       print("Installation is not possible (ansible not found). Please install ansible before i3-xfce.")
     else:
       setup(
           name="i3-xfce",
-          version="0.5.0",
+          version=version,
           packages=find_packages("src"),
           package_dir ={'':'src'},
           data_files=data_files,
@@ -71,7 +82,7 @@ def process_setup():
           author_email="Alexandre ACEBEDO",
           description="I3 installer for xfce4",
           license="LGPLv3",
-          keywords="cloudflare dns",
+          keywords="i3 xfce",
           url="http://github.com/aacebedo/i3-xfce",
           entry_points={'console_scripts':
                         ['i3-xfce = i3xfce.__main__:CmdLine.main']}

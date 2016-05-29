@@ -20,8 +20,7 @@
 import re
 import os
 import sys
-import shutil
-import pwd
+import pkg_resources
 import argparse
 import subprocess
 import uuid
@@ -212,8 +211,9 @@ class CmdLine:
     dirs = os.listdir(rolesPath)
     # Create main parser
     parser = argparse.ArgumentParser(prog="i3-xfce", description='i3-xfce-installer.')
+    parser.add_argument("--version","-v",help="Display version", action='version', version="{}".format(pkg_resources.require("i3-xfce")[0].version))
     root_subparsers = parser.add_subparsers(dest="function")
-     
+    
     # Parser for list command
     install_parser = root_subparsers.add_parser('install', help='install files')
     install_parser.add_argument('--parts', '-p', help='Parts to install', nargs="+", metavar=dirs, type=str, choices=dirs, default=dirs)
