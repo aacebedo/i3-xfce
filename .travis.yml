@@ -39,16 +39,18 @@ script:
       --url https://github.com/aacebedo/i3-xfce -v ${TRAVIS_BRANCH} -s dir . &&
       fpm -t zip -n i3-xfce -p /build/trusty/amd64/packages -a amd64 -f --prefix /usr/local 
       --url https://github.com/aacebedo/i3-xfce -v ${TRAVIS_BRANCH} -s dir ."
-      
+  - > 
+      sudo mkdir -m 777 -p /build/xenial/amd64/install /build/xenial/amd64/packages 
+      /build/xenial/amd64/install/lib/python3.5/site-packages/      
   - > 
       docker run -t --rm -v /build:/build build-image:xenial_${TRAVIS_BRANCH}_amd64 zsh 
       -c "cd /src && python3 ./setup.py install --prefix=/build/xenial/amd64/install &&
-      cd /build//amd64/install/ && 
-      fpm -t tar -n i3-xfce -p /build//amd64/packages -a amd64 -f --prefix /usr/local 
+      cd /build/xenial/amd64/install/ && 
+      fpm -t tar -n i3-xfce -p /build/xenial/amd64/packages -a amd64 -f --prefix /usr/local 
       --url https://github.com/aacebedo/i3-xfce -v ${TRAVIS_BRANCH} -s dir . &&
-      fpm -t deb -n i3-xfce -p /build//amd64/packages -a amd64 -f --prefix /usr/local 
+      fpm -t deb -n i3-xfce -p /build/xenial/amd64/packages -a amd64 -f --prefix /usr/local 
       --url https://github.com/aacebedo/i3-xfce -v ${TRAVIS_BRANCH} -s dir . &&
-      fpm -t zip -n i3-xfce -p /build//amd64/packages -a amd64 -f --prefix /usr/local 
+      fpm -t zip -n i3-xfce -p /build/xenial/amd64/packages -a amd64 -f --prefix /usr/local 
       --url https://github.com/aacebedo/i3-xfce -v ${TRAVIS_BRANCH} -s dir ."
       
 
@@ -63,8 +65,30 @@ script:
      --licenses LGPL-3.0 
      --package /build/trusty/amd64/packages/i3-xfce_${TRAVIS_BRANCH}_amd64.deb trusty amd64 
      --package /build/xenial/amd64/packages/i3-xfce_${TRAVIS_BRANCH}_amd64.deb xenial amd64
-  
+     
+after_success:
+  - sudo chmod -R a+rwX /build
+  - sudo add-apt-repository ppa:ansible/ansible -y && sudo apt update 
+  - sudo apt install ansible --force-yes -y
+  - > 
+     mv /build/trusty/amd64/packages/i3-xfce.tar 
+     /build/trusty/amd64/packages/i3-xfce_trusty_${TRAVIS_BRANCH}_amd64.tar &&
+     mv /build/trusty/amd64/packages/i3-xfce.zip 
+     /build/trusty/amd64/packages/i3-xfce_trusty_${TRAVIS_BRANCH}_amd64.zip &&
+     mv /build/xenial/amd64/packages/i3-xfce.tar
+     /build/xenial/amd64/packages/i3-xfce_xenial_${TRAVIS_BRANCH}_amd64.tar &&
+     mv /build/xenial/amd64/packages/i3-xfce.zip
+     /build/xenial/amd64/packages/i3-xfce_xenial_${TRAVIS_BRANCH}_amd64.zip
+       
 deploy:
+  - provider: bintray
+    skip_cleanup: true
+    file: /build/bintray.desc
+    user: ${BINTRAY_USERNAME}
+    key: ${BINTRAY_APIKEY}
+    dry-run: false
+    on:
+      tags: true
   - provider: releases
     skip_cleanup: true
     api-key: $GITHUB_TOKEN
@@ -73,14 +97,6 @@ deploy:
       - /build/trusty/amd64/packages/i3-xfce_trusty_${TRAVIS_BRANCH}_amd64.zip
       - /build/xenial/amd64/packages/i3-xfce_xenial_${TRAVIS_BRANCH}_amd64.tar
       - /build/xenial/amd64/packages/i3-xfce_xenial_${TRAVIS_BRANCH}_amd64.zip
-    on:
-      tags: true
-  - provider: bintray
-    skip_cleanup: true
-    file: /build/bintray.desc
-    user: $BINTRAY_USERNAME
-    key: $BINTRAY_APIKEY
-    dry-run: false
     on:
       tags: true
   - provider: pypi

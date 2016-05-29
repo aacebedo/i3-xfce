@@ -21,32 +21,45 @@ Setup script for i3-xfce
 """
 import sys
 import pathlib
-import argparse
 import platform
 import os
-from git import repo
-import git
 import distutils
+try: 
+  import versioneer
+except Exception as e:
+  sys.exit("versioneer for python3 is missing")
+from platform import python_version
 try:
   from setuptools import setup, find_packages
 except Exception as e:
   sys.exit("setuptools for python3 is missing")
 
+from setuptools.command.install import install
 
+class InstallCommand(install):
+    user_options = install.user_options + [
+        ('prefix=', None, 'Install prefix pathsomething')
+    ]
+
+    def initialize_options(self):
+        install.initialize_options(self)
+        self.prefix = None
+
+    def finalize_options(self):
+        #print('The custom option for install is ', self.custom_option)
+        install.finalize_options(self)
+
+    def run(self):
+        if self.prefix != None:
+          os.environ["PYTHONPATH"] = os.path.join(self.prefix,"lib","python{}.{}".format(python_version()[0],python_version()[2]),"site-packages")
+        install.run(self)
+        
 def process_setup():
     """
     Setup function
     """
     if sys.version_info < (3,0):
         sys.exit("i3-xfce only supports python3. Please run setup.py with python3.")
-  
-    parser = argparse.ArgumentParser(add_help=False)
-    parser.add_argument("--prefix", type=str)
-    args, _ = parser.parse_known_args(sys.argv[1:])
-
-    prefix = sys.exec_prefix
-    if args.prefix != None:
-        prefix = args.prefix
 
     data_files = []
     
@@ -57,23 +70,18 @@ def process_setup():
                   if os.path.isfile(os.path.join(dname,fname, f)):
                     real_path = pathlib.Path(os.path.join(dname,fname,f)).relative_to("resources")                    
                     data_files.append((os.path.dirname(str(real_path)),[os.path.join("resources",str(real_path))]))
-    
-    version = "0.0.0"
-    
-    if git.repo.fun.is_git_dir(os.path.join(os.path.dirname(os.path.realpath(__file__)),".git")):
-      repo = Repo(os.path.dirname(os.path.realpath(__file__)))
-      for tag in repo.tags:
-        if tag.commit == repo.head.commit:
-          version = tag.name
-          break
-        
+   
+    cmds = versioneer.get_cmdclass()
+    cmds["install"] = InstallCommand
+         
     res = distutils.spawn.find_executable("ansible")
     if res is None:
       print("Installation is not possible (ansible not found). Please install ansible before i3-xfce.")
     else:
       setup(
           name="i3-xfce",
-          version=version,
+          version=versioneer.get_version(),
+          cmdclass=cmds,
           packages=find_packages("src"),
           package_dir ={'':'src'},
           data_files=data_files,

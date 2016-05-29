@@ -22,3 +22,6 @@ This module contains the i3-xfce application
 import sys
 if sys.version_info < (3,0):
   sys.exit("i3-xfce only supports python3. Please check your installation.")
+from ._version import get_versions
+__version__ = get_versions()['version']
+del get_versions
