@@ -1,8 +1,5 @@
-    - apt_key: url=https://dl-ssl.google.com/linux/linux_signing_key.pub state=present
-  
     - apt_repository: repo='{{item}}' state=present update_cache=true
       with_items: 
-       - deb http://dl.google.com/linux/chrome/deb/ stable main
        - ppa:aacebedo/libi3ipc-glib
        - ppa:aacebedo/xfce4-i3-workspaces-plugin
        - ppa:aacebedo/fasd
@@ -19,7 +16,6 @@
        - wget
        - cmake
        - build-essential
-       - google-chrome-beta
        - python-pip
        - dmenu
        - feh  
