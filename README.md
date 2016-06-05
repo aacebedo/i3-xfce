@@ -14,6 +14,8 @@ It has been successfully tested with ubuntu 15.04/15.10/16.04 and xubuntu 15.04/
 
 ### Install and configure
 $> ./setup.py install -prefix=<install path>
+or
+$> pip3 install i3-xfce
 
 ### Usage
 ##### Install all
