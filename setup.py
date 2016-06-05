@@ -51,7 +51,7 @@ class InstallCommand(install):
 
     def run(self):
         if self.prefix != None:
-          os.environ["PYTHONPATH"] = os.path.join(self.prefix,"lib","python{}.{}".format(python_version()[0],python_version()[2]),"dist-packages")
+          os.environ["PYTHONPATH"] = os.path.join(self.prefix,"lib","python{}.{}".format(python_version()[0],python_version()[2]),"sites-packages")
         install.run(self)
         
 def process_setup():
@@ -84,7 +84,7 @@ def process_setup():
           packages=find_packages("src"),
           package_dir ={'':'src'},
           data_files=data_files,
-          install_requires=['argcomplete>=1.0.0','argparse>=1.0.0', 'pyyaml>=3.10', 'progressbar2>=2.0.0'],
+          install_requires=['pyyaml>=3.10', 'progressbar2>=2.0.0'],
           author="Alexandre ACEBEDO",
           author_email="Alexandre ACEBEDO",
           description="I3 installer for xfce4",
