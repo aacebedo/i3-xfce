@@ -39,10 +39,8 @@ try:
 except Exception as e:
   sys.exit("python3-yaml is missing")
 
-
-INSTALLDIR = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), ".."))
-ROLESDIR = os.path.abspath(os.path.join(INSTALLDIR, "share", "i3-xfce", "roles"))
-
+INSTALLDIR = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__))))
+ROLESDIR = os.path.abspath(os.path.join(INSTALLDIR, "resources", "roles"))
 
 class RegexedQuestion:
     _question = ""
