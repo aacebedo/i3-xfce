@@ -20,8 +20,7 @@
 import re
 import os
 import sys
-import shutil
-import pwd
+import pkg_resources
 import argparse
 import subprocess
 import uuid
@@ -40,10 +39,8 @@ try:
 except Exception as e:
   sys.exit("python3-yaml is missing")
 
-
-INSTALLDIR = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), ".."))
-ROLESDIR = os.path.abspath(os.path.join(INSTALLDIR, "share", "i3-xfce", "roles"))
-
+INSTALLDIR = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__))))
+ROLESDIR = os.path.abspath(os.path.join(INSTALLDIR, "resources", "roles"))
 
 class RegexedQuestion:
     _question = ""
@@ -212,8 +209,9 @@ class CmdLine:
     dirs = os.listdir(rolesPath)
     # Create main parser
     parser = argparse.ArgumentParser(prog="i3-xfce", description='i3-xfce-installer.')
+    parser.add_argument("--version","-v",help="Display version", action='version', version="{}".format(pkg_resources.require("i3-xfce")[0].version))
     root_subparsers = parser.add_subparsers(dest="function")
-     
+    
     # Parser for list command
     install_parser = root_subparsers.add_parser('install', help='install files')
     install_parser.add_argument('--parts', '-p', help='Parts to install', nargs="+", metavar=dirs, type=str, choices=dirs, default=dirs)
@@ -237,10 +235,13 @@ class CmdLine:
       cmdline = CmdLine()
       signal.signal(signal.SIGINT, partial(CmdLine.signal_handler, cmdline))
       args = cmdline.parse_args(sys.argv)
-      cmdline.execute_action(args.function, args)
-      if(BinaryQuestion("Do you want to reboot your computer now for changes to take effect?",
+      if args.function != None:
+        cmdline.execute_action(args.function, args)
+        if(BinaryQuestion("Do you want to reboot your computer now for changes to take effect?",
                              "Enter a Y or a N", "N").ask() == True):
-        os.system("reboot now")
+          os.system("reboot now")
+      else:
+        cmdline.parse_args([None,"-h"])
       sys.exit()
     except Exception as e:
       sys.exit(e)

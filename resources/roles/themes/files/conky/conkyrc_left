@@ -1,0 +1,74 @@
+background yes
+use_xft yes
+xftfont 123:size=8
+xftalpha 0.1
+update_interval 0.5
+total_run_times 0
+own_window_transparent yes
+own_window_hints undecorated,below,sticky,skip_taskbar,skip_pager
+double_buffer yes
+minimum_size 350 5
+maximum_width 350
+draw_shades no
+draw_outline no
+draw_borders no
+draw_graph_borders no
+default_color gray
+default_shade_color red
+default_outline_color green
+alignment top_left
+gap_x 30
+gap_y 30
+no_buffers no
+uppercase no
+cpu_avg_samples 2
+net_avg_samples 1
+override_utf8_locale yes
+text_buffer_size 256
+own_window yes
+own_window_class conky
+own_window_type override
+draw_graph_borders yes
+
+TEXT
+
+${font Droid Sans:size=20}${color #D71700}${nodename}${color Ivory}          Ubuntu ${font openlogos:size=20}u
+
+${voffset -120}
+${color white}
+${font}
+${font Droid Sans:bold:size=10}${color #D71700}SYSTEM ${color #CCCCCC} ${hr 2}
+$font${color white}$sysname $kernel $alignr $machine
+Intel Pentium D $alignr${freq_g cpu0}Ghz
+Uptime $alignr${uptime}
+File System $alignr${fs_type}
+
+${font Droid Sans:bold:size=10}${color #D71700}PROCESSORS ${color #CCCCCC}${hr 2}
+$font${color white}CPU1  ${cpu cpu1}% ${cpubar cpu1}
+#CPU2  ${cpu cpu2}% ${cpubar cpu2}
+#CPU3  ${cpu cpu3}% ${cpubar cpu3}
+#CPU4  ${cpu cpu4}% ${cpubar cpu4}
+${font Droid Sans:bold:size=10}${color #D71700}CPU USAGE ${color #CCCCCC}${hr 2}
+${color white}${cpugraph 32,350 FFFFFF FFFFFF}
+
+${font Droid Sans:bold:size=10}${color #D71700}MEMORY ${color #CCCCCC}${hr 2}
+$font${color white}MEM $alignc $mem / $memmax $alignr $memperc%
+$membar
+
+${font Droid Sans:bold:size=10}${color #D71700}HDD ${color #CCCCCC}${hr 2}
+$font${color white}/home $alignc ${fs_used /home} / ${fs_size /home} $alignr ${fs_free_perc /home}%
+${fs_bar /home}
+/ $alignc ${fs_used /} / ${fs_size /} $alignr ${fs_free_perc /}%
+${fs_bar /}
+/mnt/net/markab/public $alignc ${fs_used /mnt/net/markab/public} / ${fs_size /mnt/net/markab/public} $alignr ${fs_free_perc /mnt/net/markab/public}%
+${fs_bar  /mnt/net/markab/public}
+
+${font Droid Sans:bold:size=10}${color #D71700}DISKIO ${color #CCCCCC}${hr 2}
+${color white}${diskiograph 32,350 FFFFFF FFFFFF 750}
+
+${font Droid Sans:bold:size=10}${color #D71700}TOP PROCESSES MEM ${color #CCCCCC}${hr 2}
+${color #FFFFFF}Name        ${alignr}   PID    CPU%
+${color white}$font${top name 1}${alignr}${top pid 1}         ${top cpu 1}
+$font${top name 2}${alignr}${top pid 2}         ${top cpu 2}
+
+

@@ -1,0 +1,33 @@
+--- /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-session.xml	2014-08-16 23:45:29.000000000 +0200
++++ xfce4-session.xml	2015-07-29 21:45:19.089936898 +0200
+@@ -7,28 +7,11 @@
+   <property name="sessions" type="empty">
+     <property name="Failsafe" type="empty">
+       <property name="IsFailsafe" type="bool" value="true"/>
+-      <property name="Count" type="int" value="5"/>
++      <property name="Count" type="int" value="1"/>
+       <property name="Client0_Command" type="array">
+-        <value type="string" value="xfwm4"/>
+-      </property>
+-      <property name="Client0_PerScreen" type="bool" value="false"/>
+-      <property name="Client1_Command" type="array">
+         <value type="string" value="xfsettingsd"/>
+       </property>
+-      <property name="Client1_PerScreen" type="bool" value="false"/>
+-      <property name="Client2_Command" type="array">
+-        <value type="string" value="xfce4-panel"/>
+-      </property>
+-      <property name="Client2_PerScreen" type="bool" value="false"/>
+-      <property name="Client3_Command" type="array">
+-        <value type="string" value="Thunar"/>
+-        <value type="string" value="--daemon"/>
+-      </property>
+-      <property name="Client3_PerScreen" type="bool" value="false"/>
+-      <property name="Client4_Command" type="array">
+-        <value type="string" value="xfdesktop"/>
+-      </property>
+-      <property name="Client4_PerScreen" type="bool" value="false"/>
++      <property name="Client0_PerScreen" type="bool" value="false"/>
+     </property>
+   </property>
+   <property name="splash" type="empty">
