@@ -7,101 +7,14 @@ python:
 
 install:
   - pip install gitpython
-  
-services:
-  - docker
 
 before_install:
-  - sudo apt-get update
-  - sudo apt-get install -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y --force-yes -q docker-engine
-  - > 
-      docker build -t build-image:trusty_${TRAVIS_BRANCH}_amd64 
-      --build-arg BRANCH_OR_REVISION=${TRAVIS_BRANCH} -f environments/build/Dockerfile.trusty 
-      environments/build
-  - > 
-      docker build -t build-image:xenial_${TRAVIS_BRANCH}_amd64 
-      --build-arg BRANCH_OR_REVISION=${TRAVIS_BRANCH} -f environments/build/Dockerfile.xenial 
-      environments/build
-  - > 
-      docker pull aacebedo-docker-build-utilities-docker.bintray.io/build-utilities:latest
- 
+  - sudo add-apt-repository ppa:ansible/ansible -y && sudo apt-get update 
+  
 script:
-  - > 
-      sudo mkdir -m 777 -p /build/trusty/amd64/install /build/trusty/amd64/packages 
-      /build/trusty/amd64/install/lib/python3.4/site-packages/
-  - > 
-      docker run -t --rm -v /build:/build build-image:trusty_${TRAVIS_BRANCH}_amd64 zsh 
-      -c "cd /src && ./setup.py develop && ./setup.py install --prefix=/build/trusty/amd64/install &&
-      cd /build/trusty/amd64/install/ && 
-      fpm -t tar -n i3-xfce -p /build/trusty/amd64/packages -a amd64 -f --prefix /usr/local 
-      --url https://github.com/aacebedo/i3-xfce -v ${TRAVIS_BRANCH} -s dir . &&
-      fpm -t deb -n i3-xfce -p /build/trusty/amd64/packages -a amd64 -f --prefix /usr/local 
-      --url https://github.com/aacebedo/i3-xfce -v ${TRAVIS_BRANCH} 
-      -d python3 -d ansible -d python -d python3-yaml -d python3-progressbar
-      -d python-pip -d python3-pip -s dir . &&
-      fpm -t zip -n i3-xfce -p /build/trusty/amd64/packages -a amd64 -f --prefix /usr/local 
-      --url https://github.com/aacebedo/i3-xfce -v ${TRAVIS_BRANCH} -s dir ."
-  - > 
-      sudo mkdir -m 777 -p /build/xenial/amd64/install /build/xenial/amd64/packages 
-      /build/xenial/amd64/install/lib/python3.5/site-packages/      
-  - > 
-      docker run -t --rm -v /build:/build build-image:xenial_${TRAVIS_BRANCH}_amd64 zsh 
-      -c "cd /src && ./setup.py develop && ./setup.py install --prefix=/build/xenial/amd64/install &&
-      cd /build/xenial/amd64/install/ && 
-      fpm -t tar -n i3-xfce -p /build/xenial/amd64/packages -a amd64 -f --prefix /usr/local 
-      --url https://github.com/aacebedo/i3-xfce -v ${TRAVIS_BRANCH} -s dir . &&
-      fpm -t deb -n i3-xfce -p /build/xenial/amd64/packages -a amd64 -f --prefix /usr/local 
-      --url https://github.com/aacebedo/i3-xfce -v ${TRAVIS_BRANCH} 
-      -d python3 -d ansible -d python -d python3-yaml -d python3-progressbar
-      -d python-pip -d python3-pip -s dir . &&
-      fpm -t zip -n i3-xfce -p /build/xenial/amd64/packages -a amd64 -f --prefix /usr/local 
-      --url https://github.com/aacebedo/i3-xfce -v ${TRAVIS_BRANCH} -s dir ."
-      
-  - > 
-     docker run -t --rm -v /build:/build 
-     aacebedo-docker-build-utilities-docker.bintray.io/build-utilities:latest deploydesc 
-     --project aacebedo/i3-xfce --branch_or_revision ${TRAVIS_BRANCH}
-     --binname i3-xfce --user aacebedo 
-     --description "Utility to install i3 on xfce" 
-     --outputpath /build/bintray.desc 
-     --repository i3-xfce-debian
-     --licenses LGPL-3.0 
-     --package /build/trusty/amd64/packages/i3-xfce_${TRAVIS_BRANCH}_amd64.deb trusty amd64 
-     --package /build/xenial/amd64/packages/i3-xfce_${TRAVIS_BRANCH}_amd64.deb xenial amd64
-     
-after_success:
-  - sudo chmod -R a+rwX /build
-  - sudo add-apt-repository ppa:ansible/ansible -y && sudo apt update 
-  - sudo apt install ansible --force-yes -y
-  - > 
-     mv /build/trusty/amd64/packages/i3-xfce.tar 
-     /build/trusty/amd64/packages/i3-xfce_trusty_${TRAVIS_BRANCH}_amd64.tar &&
-     mv /build/trusty/amd64/packages/i3-xfce.zip 
-     /build/trusty/amd64/packages/i3-xfce_trusty_${TRAVIS_BRANCH}_amd64.zip &&
-     mv /build/xenial/amd64/packages/i3-xfce.tar
-     /build/xenial/amd64/packages/i3-xfce_xenial_${TRAVIS_BRANCH}_amd64.tar &&
-     mv /build/xenial/amd64/packages/i3-xfce.zip
-     /build/xenial/amd64/packages/i3-xfce_xenial_${TRAVIS_BRANCH}_amd64.zip
+  - sudo apt-get install ansible --force-yes -y
        
 deploy:
-  - provider: bintray
-    skip_cleanup: true
-    file: /build/bintray.desc
-    user: ${BINTRAY_USERNAME}
-    key: ${BINTRAY_APIKEY}
-    dry-run: false
-    on:
-      tags: true
-  - provider: releases
-    skip_cleanup: true
-    api-key: $GITHUB_TOKEN
-    file:
-      - /build/trusty/amd64/packages/i3-xfce_trusty_${TRAVIS_BRANCH}_amd64.tar
-      - /build/trusty/amd64/packages/i3-xfce_trusty_${TRAVIS_BRANCH}_amd64.zip
-      - /build/xenial/amd64/packages/i3-xfce_xenial_${TRAVIS_BRANCH}_amd64.tar
-      - /build/xenial/amd64/packages/i3-xfce_xenial_${TRAVIS_BRANCH}_amd64.zip
-    on:
-      tags: true
   - provider: pypi
     user: $PYPI_USER
     password: $PYPI_PASSWORD
