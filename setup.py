@@ -51,7 +51,7 @@ class InstallCommand(install):
 
     def run(self):
         if self.prefix != None:
-          os.environ["PYTHONPATH"] = os.path.join(self.prefix,"lib","python{}.{}".format(python_version()[0],python_version()[2]),"site-packages")
+          os.environ["PYTHONPATH"] = os.path.join(self.prefix,"lib","python{}.{}".format(python_version()[0],python_version()[2]),"dist-packages")
         install.run(self)
         
 def process_setup():
@@ -63,14 +63,13 @@ def process_setup():
 
     data_files = []
     
-    if platform.system() == "Linux":
-        for dname, dirs, _ in os.walk("resources"):
-            for fname in dirs:                
-                for f in os.listdir(os.path.join(dname,fname)):
-                  if os.path.isfile(os.path.join(dname,fname, f)):
-                    real_path = pathlib.Path(os.path.join(dname,fname,f)).relative_to("resources")                    
-                    data_files.append((os.path.dirname(str(real_path)),[os.path.join("resources",str(real_path))]))
-   
+    for dname, dirs, _ in os.walk("resources"):
+      for fname in dirs:                
+          for f in os.listdir(os.path.join(dname,fname)):
+            if os.path.isfile(os.path.join(dname,fname, f)):
+              real_path = pathlib.Path(os.path.join(dname,fname,f)).relative_to("resources")                    
+              data_files.append((os.path.join("lib","python{}.{}".format(python_version()[0],python_version()[2]),"dist-packages","i3xfce","resources", os.path.dirname(str(real_path))),[os.path.join("resources",str(real_path))]))
+
     cmds = versioneer.get_cmdclass()
     cmds["install"] = InstallCommand
          
