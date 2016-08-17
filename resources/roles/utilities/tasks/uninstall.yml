@@ -32,6 +32,8 @@
       with_items:
        - aptitude
        - docker.io
+       - libqt5libqgtk2
+       - libqt5svg5
        - vim
        - python-dev
        - conky
