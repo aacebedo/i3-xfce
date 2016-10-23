@@ -33,11 +33,11 @@ from functools import partial
 try:
   from progressbar import AnimatedMarker, Bar, ProgressBar, RotatingMarker, Timer
 except Exception as e:
-  sys.exit("python3-progressbar is missing")
+  sys.exit("progressbar2 is missing")
 try:
   import yaml
 except Exception as e:
-  sys.exit("python3-yaml is missing")
+  sys.exit("yaml is missing")
 
 INSTALLDIR = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__))))
 ROLESDIR = os.path.abspath(os.path.join(INSTALLDIR, "resources", "roles"))

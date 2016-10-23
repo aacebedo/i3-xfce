@@ -13,6 +13,19 @@ It has been successfully tested with ubuntu 15.04/15.10/16.04 and xubuntu 15.04/
 - Python-yaml
 - Python-progressbar
 
+
+### Install dependencies
+Installl pip3 and python3 using the package manager tool of your distribution.
+For ubuntu the command to execute is:
+```
+$> apt install python3 python3-pip
+```
+
+Then install the i3-xfce dependencies:
+```
+$> pip3 install -r ./requirements.txt
+```
+
 ### Install and configure
 ```
 $> ./setup.py install -prefix=<install path>
