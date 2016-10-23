@@ -23,7 +23,7 @@ $> apt install python3 python3-pip
 
 Then install the i3-xfce dependencies:
 ```
-$> pip3 install yaml progressbar2
+$> pip3 install -r ./requirements.txt
 ```
 
 ### Install and configure

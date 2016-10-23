@@ -73,6 +73,8 @@ def process_setup():
     cmds = versioneer.get_cmdclass()
     cmds["install"] = InstallCommand
          
+    REQUIREMENTS = [i.strip() for i in open("requirements.txt").readlines()]
+
     res = distutils.spawn.find_executable("ansible")
     if res is None:
       print("Installation is not possible (ansible not found). Please install ansible before i3-xfce.")
@@ -84,7 +86,7 @@ def process_setup():
           packages=find_packages("src"),
           package_dir ={'':'src'},
           data_files=data_files,
-          install_requires=['pyyaml>=3.10', 'progressbar2>=2.0.0'],
+          install_requires=REQUIREMENTS,
           author="Alexandre ACEBEDO",
           author_email="Alexandre ACEBEDO",
           description="I3 installer for xfce4",
