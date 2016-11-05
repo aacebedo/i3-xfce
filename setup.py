@@ -56,27 +56,23 @@ def execute_setup():
 
   requirements = [i.strip() for i in open("requirements.txt").readlines()]
 
-  res = distutils.spawn.find_executable("ansible")
-  if res is None:
-    print "Installation is not possible (ansible not found). Please install ansible before i3-xfce."
-  else:
-    setup(
-        name="i3-xfce",
-        version=versioneer.get_version(),
-        cmdclass=versioneer.get_cmdclass(),
-        packages=find_packages("src"),
-        package_dir={'':'src'},
-        data_files=data_files,
-        install_requires=requirements,
-        author="Alexandre ACEBEDO",
-        author_email="Alexandre ACEBEDO",
-        description="I3 installer for xfce4",
-        license="LGPLv3",
-        keywords="i3 xfce",
-        url="http://github.com/aacebedo/i3-xfce",
-        entry_points={'console_scripts':
-                      ['i3-xfce = i3xfce.core:main']}
-        )
+  setup(
+      name="i3-xfce",
+      version=versioneer.get_version(),
+      cmdclass=versioneer.get_cmdclass(),
+      packages=find_packages("src"),
+      package_dir={'':'src'},
+      data_files=data_files,
+      install_requires=requirements,
+      author="Alexandre ACEBEDO",
+      author_email="Alexandre ACEBEDO",
+      description="I3 installer for xfce4",
+      license="LGPLv3",
+      keywords="i3 xfce",
+      url="http://github.com/aacebedo/i3-xfce",
+      entry_points={'console_scripts':
+                    ['i3-xfce = i3xfce.core:main']}
+      )
 
 if __name__ == "__main__":
   execute_setup()
