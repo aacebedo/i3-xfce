@@ -7,23 +7,23 @@ It has been successfully tested with ubuntu 15.04/15.10/16.04 and xubuntu 15.04/
 
 ### Dependencies
 - *Ubuntu 15.04/15.10/16.04
-- Ansible >=1.9.0 (www.ansible.com)
 - Python2 >=2.7.0
-- Python3 >=3.0.0
-- Python-yaml
-- Python-progressbar
+- python-yaml
+- python-progressbar
+- python-ansible
+- python-pathlib
 
 
 ### Install dependencies
-Installl pip3 and python3 using the package manager tool of your distribution.
+Installl pip and python using the package manager tool of your distribution.
 For ubuntu the command to execute is:
 ```
-$> apt install python3 python3-pip
+$> apt install python python-pip
 ```
 
 Then install the i3-xfce dependencies:
 ```
-$> pip3 install -r ./requirements.txt
+$> pip install -r ./requirements.txt
 ```
 
 ### Install and configure
@@ -32,7 +32,7 @@ $> ./setup.py install -prefix=<install path>
 ```
 or
 ```
-$> pip3 install i3-xfce
+$> pip install i3-xfce
 ```
 
 ### Usage
