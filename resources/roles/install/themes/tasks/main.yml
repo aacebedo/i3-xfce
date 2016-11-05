@@ -11,6 +11,7 @@
        - fonts-powerline
        - numix-gtk-theme
        - numix-icon-theme-circle
+       - numix-plymouth-theme
        - compton
        - conky
        - feh

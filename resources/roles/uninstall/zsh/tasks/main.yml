@@ -1,8 +1,11 @@
-    - file: path=/home/{{remote_user}}/.zshrc state=absent
-    - shell: chsh {{remote_user}} -s /bin/bash
-    - file: path=/home/{{remote_user}}/.oh-my-zsh state=absent
+    - name: Change back user's shell to bash
+      shell: chsh {{remote_user}} -s /bin/bash
+    
+    - name: Remove ohmyzsh
+      file: path=/home/{{remote_user}}/.oh-my-zsh state=absent
 
-    - apt: pkg={{item}} force=yes state=absent  
+    - name: Remove packages using apt
+      apt: pkg={{item}} force=yes state=absent  
       with_items:
        - zsh
        - tree
