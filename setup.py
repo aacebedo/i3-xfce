@@ -23,15 +23,18 @@ import sys
 import os
 from platform import python_version
 import distutils
-import pathlib
+try:
+  import pathlib
+except ImportError:
+  sys.exit("pathlib package is missing")
 try:
   from setuptools import setup, find_packages
 except ImportError:
-  sys.exit("setuptools for python3 is missing")
+  sys.exit("setuptools package is missing")
 try:
   import versioneer
 except ImportError:
-  sys.exit("versioneer for python3 is missing")
+  sys.exit("versioneer package is missing")
 
 def execute_setup():
   """
