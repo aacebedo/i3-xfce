@@ -23,10 +23,7 @@ import sys
 import os
 from platform import python_version
 import distutils
-try:
-  import pathlib
-except ImportError:
-  sys.exit("pathlib package is missing")
+import pathlib
 try:
   from setuptools import setup, find_packages
 except ImportError:
