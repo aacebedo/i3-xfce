@@ -1,4 +1,6 @@
 pyyaml>=3.10
 progressbar2>=2.0.0
 pathlib>=1.0.0
-ansible>=2.0.0
+ansible>=2.2.0
+enum>=0.4.6
+colorlog>=2.7.0
