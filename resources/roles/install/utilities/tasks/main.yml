@@ -47,7 +47,7 @@
     - name: Changing ownship of Albert configuraiton folder
       file: dest=/home/{{remote_user}}/.config/albert owner={{remote_user}} group={{remote_user}} state=directory
       
-    - name: Copy Albert configuration file to Albert configuration folder
+    - name: Copy Albert configuration file
       copy: src=albert.conf dest=/home/{{remote_user}}/.config/albert/albert.conf owner={{remote_user}} group={{remote_user}} mode='u=rw' 
 
     - name: Changing file properties of user configuration folder
