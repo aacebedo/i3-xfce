@@ -11,7 +11,6 @@ It has been successfully tested with ubuntu 15.04/15.10/16.04 and xubuntu 15.04/
 - python-yaml
 - python-progressbar
 - python-ansible
-- python-pathlib
 
 
 ### Install dependencies
@@ -28,7 +27,7 @@ $> pip install -r ./requirements.txt
 
 ### Install and configure
 ```
-$> ./setup.py install -prefix=<install path>
+$> ./setup.py install
 ```
 or
 ```
