@@ -22,7 +22,9 @@
        - git-flow
        - dtrx
        - fasd
-   
+       - zsh
+       - tree
+    
     - name: Download j4-desktop-menu
       get_url: url=https://github.com/enkore/j4-dmenu-desktop/archive/r2.12.tar.gz dest=/tmp/j4-desktop-menu.tar.gz
       
@@ -50,4 +52,17 @@
 
     - name: Changing file properties of user configuration folder
       file: dest=/home/{{remote_user}}/.config recurse=true mode="u=rwX"
+      
+    - name: Copy zshrc file
+      copy: src=zsh/zshrc dest=/home/{{remote_user}}/.zshrc owner={{remote_user}} group={{remote_user}} mode='u=rw'
+    
+    - name: Change user's shell to zsh
+      shell: chsh {{remote_user}} -s /bin/zsh
+      
+    - name: Install ohmyzsh (1/2)
+      git: repo=https://github.com/robbyrussell/oh-my-zsh.git dest=/home/{{remote_user}}/.oh-my-zsh
+    
+    - name: Install ohmyzsh (2/2)
+      file: path=/home/{{remote_user}}/.oh-my-zsh recurse=true owner={{remote_user}} group={{remote_user}}
+      
       

@@ -6,6 +6,8 @@
        - aptitude
        - dmenu
        - fasd
+       - zsh
+       - tree
   
     - name: Remove PPA repositories
       apt_repository: repo='{{item}}' state=absent update_cache=true
@@ -27,3 +29,9 @@
        - quickswitch-i3
        - cheat
        - fasd
+       
+    - name: Change back user's shell to bash
+      shell: chsh {{remote_user}} -s /bin/bash
+    
+    - name: Remove ohmyzsh
+      file: path=/home/{{remote_user}}/.oh-my-zsh state=absent
