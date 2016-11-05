@@ -24,10 +24,6 @@ import os
 from platform import python_version
 import distutils
 try:
-  import pathlib
-except ImportError:
-  sys.exit("pathlib package is missing")
-try:
   from setuptools import setup, find_packages
 except ImportError:
   sys.exit("setuptools package is missing")
@@ -49,7 +45,7 @@ def execute_setup():
     for fname in dirs:
       for cur_file in os.listdir(os.path.join(dname, fname)):
         if os.path.isfile(os.path.join(dname, fname, cur_file)):
-          real_path = pathlib.Path(os.path.join(dname, fname, cur_file)).relative_to("resources")
+          real_path = os.path.relpath((os.path.join(dname, fname, cur_file)), "resources")
           data_files.append((os.path.join("i3xfce", "resources",
                                           os.path.dirname(str(real_path))),
                              [os.path.join("resources", str(real_path))]))

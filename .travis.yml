@@ -3,16 +3,10 @@ sudo: required
 language: python
 
 python:
- - 3.5
-
-install:
-  - pip install gitpython
-
-before_install:
-  - sudo add-apt-repository ppa:ansible/ansible -y && sudo apt-get update 
-  
+ - 2.7
+ 
 script:
-  - sudo apt-get install ansible --force-yes -y
+  - sudo ./setup.py install
        
 deploy:
   - provider: pypi
