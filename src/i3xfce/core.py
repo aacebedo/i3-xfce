@@ -75,7 +75,7 @@ class RegexedQuestion(object): # pylint: disable=too-few-public-methods
     self._question = question
     self._regex = regex
     self._error_msg = error_msg
-    if isinstance(str, default):
+    if isinstance(str, type(default)):
       self._default = default
     else:
       self._default = ""
@@ -108,7 +108,7 @@ class BinaryQuestion(RegexedQuestion): # pylint: disable=too-few-public-methods
     """
     Constructor
     """
-    if isinstance(str, default) and re.match("Y|y|N|n", default):
+    if isinstance(str, type(default)) and re.match("Y|y|N|n", default):
       self._default = default
 
     RegexedQuestion.__init__(self, question + " Y/N", error_msg, "Y|y|N|n", default)
@@ -453,6 +453,6 @@ def main():
     sys.exit()
   except Exception as exc:  # pylint: disable=broad-except
     i3xfce.loggers.ROOTLOGGER.error("A task failed to execute, check the messages and correct \
-    the issue before restarting i3-xfce")
+the issue before restarting i3-xfce")
     sys.exit(exc)
 
