@@ -1,22 +1,23 @@
-    - apt: pkg={{item}} force=yes state=installed  
+    - name: Remove packages using apt
+      apt: pkg={{item}} force=yes state=installed  
       with_items:
        - wget
        - build-essential
-       - python-pip
+       - aptitude
+       - dmenu
+       - fasd
   
-    - apt_repository: repo='{{item}}' state=absent update_cache=true
+    - name: Remove PPA repositories
+      apt_repository: repo='{{item}}' state=absent update_cache=true
       with_items: 
-       - ppa:aacebedo/libi3ipc-glib
-       - ppa:aacebedo/xfce4-i3-workspaces-plugin
        - ppa:aacebedo/fasd
-       
-    - get_url: url=https://github.com/clvv/fasd/archive/1.0.1.tar.gz dest=/tmp/fasd.tar.gz
-    - unarchive: src=/tmp/fasd.tar.gz dest=/tmp/
-    - shell: make uninstall chdir=/tmp/fasd-1.0.1
+       - ppa:nilarimogard/webupd8
 
-    - file: path=/usr/local/bin/j4-dmenu-desktop state=absent
+    - name: Removed fasd shortcut
+      file: path=/usr/local/bin/j4-dmenu-desktop state=absent
     
-    - pip: name={{item}} state=absent
+    - name: Remove python packages using pip
+      pip: name={{item}} state=absent
       with_items:
        - albert
        - pathlib
@@ -25,26 +26,4 @@
        - i3-py
        - quickswitch-i3
        - cheat
-       
-    - file: path=/home/{{remote_user}}/.i3 state=absent 
-    
-    - apt: pkg={{item}} force=yes state=absent  
-      with_items:
-       - aptitude
-       - libqt5libqgtk2
-       - libqt5svg5
-       - vim
-       - python-dev
-       - conky
-       - wget
-       - cmake
-       - build-essential
-       - python-pip
-       - dmenu
-       - feh  
-       - git
-       - python-software-properties
-       - git-flow
-       - libi3ipc-glib
-       - xfce4-i3-workspaces-plugin
        - fasd

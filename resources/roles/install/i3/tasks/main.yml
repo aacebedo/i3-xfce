@@ -1,8 +1,18 @@
+    - name: Add PPA repositories
+      apt_repository: repo='{{item}}' state=present update_cache=true
+      with_items: 
+       - ppa:aacebedo/libi3ipc-glib
+       - ppa:aacebedo/xfce4-i3-workspaces-plugin
+       
     - name: Install i3-wm package using apt
       apt: pkg={{item}} force=yes state=installed  
       with_items:
        - i3-wm
-
+       - libi3ipc-glib
+       - xfce4-i3-workspaces-plugin
+       - libqt5libqgtk2
+       - libqt5svg5
+       
     - name: Copy the autostart scripts
       copy: src={{item}} dest=/home/{{remote_user}}/.config/autostart/ owner={{remote_user}} group={{remote_user}} mode='u=rw'
       with_fileglob:
@@ -35,4 +45,4 @@
       lineinfile: dest=/usr/share/applications/xfce-wm-settings.desktop state=present line="Hidden=true" 
 
     - name: Change ownership of ~/.config directory 
-      file: path=/home/{{remote_user}}/.config recurse='yes' owner={{remote_user}} group={{remote_user}} mode='u=rwX'
+      file: path=/home/{{remote_user}}/.config recurse='yes' state='directory' owner={{remote_user}} group={{remote_user}} mode='u=rwX'

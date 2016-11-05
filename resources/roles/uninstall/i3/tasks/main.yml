@@ -2,7 +2,17 @@
       apt: pkg={{item}} force=yes state=absent  
       with_items:
        - i3-wm
+       - libi3ipc-glib
+       - xfce4-i3-workspaces-plugin
+       - libqt5libqgtk2
+       - libqt5svg5
 
+    - name: Add PPA repositories
+      apt_repository: repo='{{item}}' state=absent update_cache=true
+      with_items: 
+       - ppa:aacebedo/libi3ipc-glib
+       - ppa:aacebedo/xfce4-i3-workspaces-plugin
+       
     - name: Removing autostart files
       file: src={{item}} dest=/home/{{remote_user}}/.config/autostart/ state=absent
       with_fileglob:

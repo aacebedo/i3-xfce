@@ -1,16 +1,14 @@
-    - apt_repository: repo='{{item}}' state=present update_cache=true
+    - name: Add PPA repositories
+      apt_repository: repo='{{item}}' state=present update_cache=true
       with_items: 
-       - ppa:aacebedo/libi3ipc-glib
-       - ppa:aacebedo/xfce4-i3-workspaces-plugin
        - ppa:aacebedo/fasd
        - ppa:nilarimogard/webupd8
  
-    - apt: pkg={{item}} force=yes state=installed  
+    - name: Install packages using apt
+      apt: pkg={{item}} force=yes state=installed  
       with_items:
        - albert
        - aptitude
-       - libqt5libqgtk2
-       - libqt5svg5
        - vim
        - python-dev
        - conky
@@ -19,20 +17,23 @@
        - build-essential
        - python-pip
        - dmenu
-       - feh  
        - git
        - python-software-properties
        - git-flow
        - dtrx
-       - libi3ipc-glib
-       - xfce4-i3-workspaces-plugin
        - fasd
    
-    - get_url: url=https://github.com/enkore/j4-dmenu-desktop/archive/r2.12.tar.gz dest=/tmp/j4-desktop-menu.tar.gz
-    - unarchive: src=/tmp/j4-desktop-menu.tar.gz dest=/tmp/
-    - shell: cmake ./ && make install chdir=/tmp/j4-dmenu-desktop-r2.12
+    - name: Download j4-desktop-menu
+      get_url: url=https://github.com/enkore/j4-dmenu-desktop/archive/r2.12.tar.gz dest=/tmp/j4-desktop-menu.tar.gz
+      
+    - name: Extract j4-desktop-menu from archive
+      unarchive: src=/tmp/j4-desktop-menu.tar.gz dest=/tmp/
+      
+    - name: Compile j4-desktop-menu and install
+      shell: cmake ./ && make install chdir=/tmp/j4-dmenu-desktop-r2.12
 
-    - pip: name={{item}} state=present
+    - name: Install python packages using pip
+      pip: name={{item}} state=present
       with_items:
        - pathlib
        - psutil
@@ -41,9 +42,12 @@
        - quickswitch-i3
        - cheat
 
-    - file: dest=/home/{{remote_user}}/.config/albert owner={{remote_user}} group={{remote_user}} state=directory
-    - copy: src=albert.conf dest=/home/{{remote_user}}/.config/albert/albert.conf owner={{remote_user}} group={{remote_user}} mode='u=rw' 
+    - name: Changing ownship of Albert configuraiton folder
+      file: dest=/home/{{remote_user}}/.config/albert owner={{remote_user}} group={{remote_user}} state=directory
+      
+    - name: Copy Albert configuration file to Albert configuration folder
+      copy: src=albert.conf dest=/home/{{remote_user}}/.config/albert/albert.conf owner={{remote_user}} group={{remote_user}} mode='u=rw' 
 
-
-    - file: dest=/home/{{remote_user}}/.config recurse=true mode="u=rwX"
-    - copy: src=albert.conf dest=/home/{{remote_user}}/.config/albert/albert.conf owner={{remote_user}} group={{remote_user}} mode='u=rw' 
+    - name: Changing file properties of user configuration folder
+      file: dest=/home/{{remote_user}}/.config recurse=true mode="u=rwX"
+      
