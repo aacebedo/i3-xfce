@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python2
 #
 # i3-xfce
 # Copyright (c) 2015, Alexandre ACEBEDO, All rights reserved.
@@ -20,8 +20,10 @@
 This module contains the i3-xfce application
 """
 import sys
-if sys.version_info < (3,0):
-  sys.exit("i3-xfce only supports python3. Please check your installation.")
 from ._version import get_versions
+
+if sys.version_info < (2, 0) or sys.version_info >= (3, 0):
+  sys.exit("i3-xfce only supports python2. Please run setup.py with python2.")
+
 __version__ = get_versions()['version']
 del get_versions
