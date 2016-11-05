@@ -1,0 +1,51 @@
+    - name: Add PPA repositories
+      apt_repository: repo='{{item}}' state=present update_cache=true
+      with_items: 
+       - ppa:aacebedo/libi3ipc-glib
+       - ppa:aacebedo/xfce4-i3-workspaces-plugin
+       
+    - name: Install i3-wm package using apt
+      apt: pkg={{item}} force=yes state=installed  
+      with_items:
+       - i3-wm
+       - libi3ipc-glib
+       - xfce4-i3-workspaces-plugin
+       - libqt5libqgtk2
+       - libqt5svg5
+       - compton
+       
+    - name: Copy the autostart scripts
+      copy: src={{item}} dest=/home/{{remote_user}}/.config/autostart/ owner={{remote_user}} group={{remote_user}} mode='u=rw'
+      with_items:
+       - autostart/compton.desktop
+       - autostart/i3.desktop
+       - autostart/xfce4-panel.desktop
+    
+    - name: Remove previous xfce4 sessions
+      file: path=/home/{{remote_user}}/.cache/sessions state=absent
+    
+    - name: Create xfce4 configuration directory in user home
+      file: path=/home/{{remote_user}}/.config/xfce4/xfconf/xfce-perchannel-xml state=directory owner={{remote_user}} group={{remote_user}} mode='u=rw'
+    
+    - name: Copy new xfce4 configuration file
+      shell: cp /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-session.xml /home/{{remote_user}}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-session.xml
+    
+    - name: Changing xfce4 configuration file ownership
+      file: path=/home/{{remote_user}}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-session.xml owner={{remote_user}} group={{remote_user}} mode='u=rw'
+    
+    - name: Create tmp folder
+      file: path=/tmp state=directory
+    
+    - name: Copy xfce4 configuration file patch
+      copy: src=xfce/xfce4-session.xml.patch dest=/tmp/ owner={{remote_user}} group={{remote_user}} mode='u=rw'
+    
+    - name: Apply patch on xfce4 configuration file
+      patch: remote_src=True
+        src=/tmp/xfce4-session.xml.patch
+        dest=/home/{{remote_user}}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-session.xml
+    
+    - name: Hide xfce-wm settings shortcut 
+      lineinfile: dest=/usr/share/applications/xfce-wm-settings.desktop state=present line="Hidden=true" 
+
+    - name: Change ownership of ~/.config directory 
+      file: path=/home/{{remote_user}}/.config recurse='yes' state='directory' owner={{remote_user}} group={{remote_user}} mode='u=rwX'

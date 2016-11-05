@@ -1,0 +1,31 @@
+    - name: Remove i3-wm package using apt 
+      apt: pkg={{item}} force=yes state=absent  
+      with_items:
+       - i3-wm
+       - libi3ipc-glib
+       - xfce4-i3-workspaces-plugin
+       - libqt5libqgtk2
+       - libqt5svg5
+       - compton
+
+    - name: Add PPA repositories
+      apt_repository: repo='{{item}}' state=absent update_cache=true
+      with_items: 
+       - ppa:aacebedo/libi3ipc-glib
+       - ppa:aacebedo/xfce4-i3-workspaces-plugin
+       
+    - name: Removing autostart files
+      file: src={{item}} dest=/home/{{remote_user}}/.config/autostart/ state=absent
+      with_items:
+       - compton.desktop
+       - i3.desktop
+       - xfce4-panel.desktop
+    
+    - name: Removing session cache 
+      file: path=/home/{{remote_user}}/.cache/sessions state=absent
+      
+    - name: Restoring default xfce4 configuration file
+      shell: cp /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-session.xml /home/{{remote_user}}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-session.xml
+      
+    - name: Show xfce-wm settings shortcut
+      lineinfile: dest=/usr/share/applications/xfce-wm-settings.desktop state=absent line="Hidden=true"

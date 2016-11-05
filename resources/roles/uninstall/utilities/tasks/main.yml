@@ -1,0 +1,37 @@
+    - name: Remove packages using apt
+      apt: pkg={{item}} force=yes state=installed  
+      with_items:
+       - wget
+       - build-essential
+       - aptitude
+       - dmenu
+       - fasd
+       - zsh
+       - tree
+  
+    - name: Remove PPA repositories
+      apt_repository: repo='{{item}}' state=absent update_cache=true
+      with_items: 
+       - ppa:aacebedo/fasd
+       - ppa:nilarimogard/webupd8
+
+    - name: Removed fasd shortcut
+      file: path=/usr/local/bin/j4-dmenu-desktop state=absent
+    
+    - name: Remove python packages using pip
+      pip: name={{item}} state=absent
+      with_items:
+       - albert
+       - pathlib
+       - psutil
+       - thefuck
+       - i3-py
+       - quickswitch-i3
+       - cheat
+       - fasd
+       
+    - name: Change back user's shell to bash
+      shell: chsh {{remote_user}} -s /bin/bash
+    
+    - name: Remove ohmyzsh
+      file: path=/home/{{remote_user}}/.oh-my-zsh state=absent
