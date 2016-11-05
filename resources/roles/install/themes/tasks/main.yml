@@ -1,0 +1,95 @@
+    - name: Add Numix PPA
+      apt_repository: repo='{{item}}' state=present update_cache=true
+      with_items: 
+       - ppa:numix/ppa
+
+    - name: Install packages using apt
+      apt: pkg={{item}} force=yes state=installed  
+      with_items: 
+       - xfce4
+       - lightdm-gtk-greeter
+       - fonts-powerline
+       - numix-gtk-theme
+       - numix-icon-theme-circle
+       - numix-plymouth-theme
+       - conky
+       - feh
+       - xfce4-terminal
+
+    - name: Check presence of i3 configuration directory
+      file: path=/home/{{remote_user}}/.i3 state=directory
+      
+    - name: Copy i3 configuration files    
+      copy: src=i3/{{item}} dest=/home/{{remote_user}}/.i3/ owner={{remote_user}} group={{remote_user}} mode='u=rw'
+      with_items:
+       - config
+       
+    - name: Change i3 configuration directory ownership
+      file: path=/home/{{remote_user}}/.i3 recurse='yes' owner={{remote_user}} group={{remote_user}} mode='u=rwX'
+
+    - name: Create conky configuration directory
+      file: path=/home/{{remote_user}}/.conky state=directory
+    
+    - name: Copy conky configuration files
+      copy: src=conky/{{item}} dest=/home/{{remote_user}}/.conky/ owner={{remote_user}} group={{remote_user}} mode='u=rw'
+      with_items:
+       - conkyrc_left
+       - conkyrc_right
+       
+    - name: Change conky configuration directory ownership
+      file: path=/home/{{remote_user}}/.conky recurse='yes' owner={{remote_user}} group={{remote_user}} mode='u=rwX'
+
+    - name: Copy compton configuration file
+      copy: src=compton/compton.conf dest=/home/{{remote_user}}/.compton.conf owner={{remote_user}} group={{remote_user}} mode='u=rw'
+    
+    - name: Change conky configuration directory ownership
+      file: path=/home/{{remote_user}}/.config/xfce4/xfconf/xfce-perchannel-xml state=directory owner={{remote_user}} group={{remote_user}} mode='u=rw'
+
+    - name: Copy default xfce4 xsettings file
+      shell: cp -n /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml /home/{{remote_user}}/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml
+    
+    - name: Change ownership of xfce4 xsettings file  
+      file: path=/home/{{remote_user}}/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml owner={{remote_user}}  group={{remote_user}} mode='u=rw'
+      
+    - name: Change xfce4 theme
+      lineinfile: dest=/home/{{remote_user}}/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml regexp=".*name=\"ThemeName\".*" line="<property name=\"ThemeName\" type=\"string\" value=\"Numix\"/>"
+    
+    - name: Change xfce icon theme
+      lineinfile: dest=/home/{{remote_user}}/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml regexp=".*name=\"IconThemeName\".*" line="<property name=\"IconThemeName\" type=\"string\" value=\"Numix-Circle\"/>"
+    
+    - name: Change xfce notification theme
+      copy: src=xfce/xfce4-notifyd.xml dest=/home/{{remote_user}}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml owner={{remote_user}}  group={{remote_user}} mode='u=rw'
+    
+    - name: Change lightdm theme (1/2)
+      lineinfile: dest=/etc/lightdm/lightdm-gtk-greeter.conf line='[greeter]'
+    
+    - name: Change lightdm theme (2/2)  
+      lineinfile: dest=/etc/lightdm/lightdm-gtk-greeter.conf regexp="^theme-name.*" line='theme-name=Numix' insertafter="[greeter]"  state=present
+      
+    - name: Change lightdm icon theme
+      lineinfile: dest=/etc/lightdm/lightdm-gtk-greeter.conf regexp="^icon-theme-name.*" line='icon-theme-name=Numix-Circle' insertafter="[greeter]" state=present
+      
+    - name: Change lightdm background (1/2)
+      lineinfile: dest=/etc/lightdm/lightdm-gtk-greeter.conf regexp="^background.*" line='background=/usr/share/backgrounds/Numix_Lightbulb.png' insertafter="[greeter]" state=present
+    
+    - name: Change lightdm background (2/2)  
+      lineinfile: dest=/etc/lightdm/lightdm-gtk-greeter.conf regexp="^user-background.*" line='user-background = false' insertafter="[greeter]" state=present
+    
+    - name: Add themed fonts      
+      copy: src={{item}} dest=/home/{{remote_user}}/.fonts/ owner={{remote_user}} group={{remote_user}} mode='u=rw'
+      with_items:
+       - fonts/openlogos.ttf
+      
+    - name: Change fonts ownership
+      file: path=/home/{{remote_user}}/.fonts recurse='yes' owner={{remote_user}} group={{remote_user}} mode='u=rwX'
+    
+    - name: Change configuration directory ownership
+      file: path=/home/{{remote_user}}/.config recurse='yes' owner={{remote_user}} group={{remote_user}} mode='u=rwX'
+
+    - name: Copy desktop background
+      copy: src=xfce/Numix_Lightbulb.png dest=/usr/share/backgrounds/Numix_Lightbulb.png  owner=root  group=root mode='a=r'
+    
+    - name: Change desktop background ownership  
+      file: path=/usr/share/backgrounds/Numix_Lightbulb.png owner={{remote_user}} group={{remote_user}} mode='u=rw'
+
+
