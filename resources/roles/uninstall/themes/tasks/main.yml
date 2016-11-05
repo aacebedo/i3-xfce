@@ -12,7 +12,6 @@
        - numix-gtk-theme
        - numix-icon-theme-circle
        - numix-wallpaper-lightbulb
-       - compton
        - feh
        - conky
 
@@ -46,12 +45,13 @@
     - name: Reset lightdm background (2/2)
       lineinfile: dest=/etc/lightdm/lightdm-gtk-greeter.conf regexp="^user-background.*" state=absent
     
-    - name: Remove autostart scripts
-      file: src={{item}} dest=/home/{{remote_user}}/.config/autostart/ state=absent
-      with_fileglob:
-       - autostart/*
-    
+    - name: Remove conky configuration files   
+      file: path=/home/{{remote_user}}/.conky/{{ item }} state=absent
+      with_items:
+       - conkyrc_left
+       - conkyrc_right
+       
     - name: Remove themed fonts   
       file: path=/home/{{remote_user}}/.fonts/{{ item }} state=absent
-      with_fileglob:
-       - fonts/*
+      with_items:
+       - openlogos.ttf

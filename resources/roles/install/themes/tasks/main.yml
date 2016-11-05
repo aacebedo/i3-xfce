@@ -12,23 +12,17 @@
        - numix-gtk-theme
        - numix-icon-theme-circle
        - numix-plymouth-theme
-       - compton
        - conky
        - feh
        - xfce4-terminal
 
-    - name: Copy autostart scripts
-      copy: src={{item}} dest=/home/{{remote_user}}/.config/autostart/ owner={{remote_user}} group={{remote_user}} mode='u=rw'
-      with_fileglob:
-       - autostart/*
-       
     - name: Check presence of i3 configuration directory
       file: path=/home/{{remote_user}}/.i3 state=directory
       
     - name: Copy i3 configuration files    
-      copy: src={{item}} dest=/home/{{remote_user}}/.i3/ owner={{remote_user}} group={{remote_user}} mode='u=rw'
-      with_fileglob:
-       - i3/*
+      copy: src=i3/{{item}} dest=/home/{{remote_user}}/.i3/ owner={{remote_user}} group={{remote_user}} mode='u=rw'
+      with_items:
+       - config
        
     - name: Change i3 configuration directory ownership
       file: path=/home/{{remote_user}}/.i3 recurse='yes' owner={{remote_user}} group={{remote_user}} mode='u=rwX'
@@ -37,9 +31,10 @@
       file: path=/home/{{remote_user}}/.conky state=directory
     
     - name: Copy conky configuration files
-      copy: src={{item}} dest=/home/{{remote_user}}/.conky/ owner={{remote_user}} group={{remote_user}} mode='u=rw'
-      with_fileglob:
-       - conky/*
+      copy: src=conky/{{item}} dest=/home/{{remote_user}}/.conky/ owner={{remote_user}} group={{remote_user}} mode='u=rw'
+      with_items:
+       - conkyrc_left
+       - conkyrc_right
        
     - name: Change conky configuration directory ownership
       file: path=/home/{{remote_user}}/.conky recurse='yes' owner={{remote_user}} group={{remote_user}} mode='u=rwX'
@@ -82,9 +77,9 @@
     
     - name: Add themed fonts      
       copy: src={{item}} dest=/home/{{remote_user}}/.fonts/ owner={{remote_user}} group={{remote_user}} mode='u=rw'
-      with_fileglob:
-       - fonts/*
-
+      with_items:
+       - fonts/openlogos.ttf
+      
     - name: Change fonts ownership
       file: path=/home/{{remote_user}}/.fonts recurse='yes' owner={{remote_user}} group={{remote_user}} mode='u=rwX'
     

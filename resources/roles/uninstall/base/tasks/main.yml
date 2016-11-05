@@ -6,6 +6,7 @@
        - xfce4-i3-workspaces-plugin
        - libqt5libqgtk2
        - libqt5svg5
+       - compton
 
     - name: Add PPA repositories
       apt_repository: repo='{{item}}' state=absent update_cache=true
@@ -15,9 +16,11 @@
        
     - name: Removing autostart files
       file: src={{item}} dest=/home/{{remote_user}}/.config/autostart/ state=absent
-      with_fileglob:
-       - autostart/*
-
+      with_items:
+       - compton.desktop
+       - i3.desktop
+       - xfce4-panel.desktop
+    
     - name: Removing session cache 
       file: path=/home/{{remote_user}}/.cache/sessions state=absent
       

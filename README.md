@@ -54,7 +54,7 @@ $> i3-xfce uninstall
 ```
 ##### Uninstall parts
 ```
-$> i3-xfce uninstall -p <parts>
+$> i3-xfce uninstall -p <part1> -p <part2> ... 
 ```
 ##### Uninstall help
 ```

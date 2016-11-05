@@ -12,11 +12,14 @@
        - xfce4-i3-workspaces-plugin
        - libqt5libqgtk2
        - libqt5svg5
+       - compton
        
     - name: Copy the autostart scripts
       copy: src={{item}} dest=/home/{{remote_user}}/.config/autostart/ owner={{remote_user}} group={{remote_user}} mode='u=rw'
-      with_fileglob:
-       - autostart/*
+      with_items:
+       - autostart/compton.desktop
+       - autostart/i3.desktop
+       - autostart/xfce4-panel.desktop
     
     - name: Remove previous xfce4 sessions
       file: path=/home/{{remote_user}}/.cache/sessions state=absent
