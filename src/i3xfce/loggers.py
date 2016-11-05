@@ -11,7 +11,7 @@ def init_loggers():
   """
   Function initialize loggers
   """
-  formatter = ColoredFormatter("%(log_color)s%(levelname)-8s%(reset)s %(blue)s%(message)s",
+  formatter = ColoredFormatter("%(log_color)s%(levelname)-8s%(reset)s %(white)s%(message)s",
                                datefmt=None,
                                reset=True,
                                log_colors={
