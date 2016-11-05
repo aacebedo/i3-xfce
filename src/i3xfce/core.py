@@ -86,8 +86,8 @@ class RegexedQuestion(object): # pylint: disable=too-few-public-methods
     """
     question_tmp = self._question
     if self._default != "":
-      question_tmp += " [{0}]".format(self._default)
-    value = input(question_tmp + ": ") # pylint: disable=bad-builtin
+      question_tmp += " [{}]".format(self._default)
+    value = raw_input(question_tmp + ": ") # pylint: disable=bad-builtin
     if value == "":
       value = self._default
     if re.match(self._regex, value):
@@ -124,7 +124,7 @@ class BinaryQuestion(RegexedQuestion): # pylint: disable=too-few-public-methods
     Asks question to user
     """
     value = RegexedQuestion.ask(self)
-    return self._options[value]
+    return self._options.get(value)
 
 class StringifiedEnum(Enum): # pylint: disable=too-few-public-methods
   """
