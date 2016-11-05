@@ -307,10 +307,11 @@ class CmdLine(object):
   _results_callback = None
 
   @staticmethod
-  def _execute_play(play, inventory, var_mgr, loader, options, callback):  # pylint: disable=too-many-arguments
+  def _execute_play(play_source, inventory, var_mgr, loader, options, callback):  # pylint: disable=too-many-arguments
     """
     Execute the playbook
     """
+    play = Play().load(play_source, variable_manager=var_mgr, loader=loader)
     tqm = None
     try:
       tqm = TaskQueueManager(
@@ -333,6 +334,7 @@ class CmdLine(object):
     Execute the requested operation
     """
     C.DEFAULT_ROLES_PATH = [os.path.join(ROLESDIR, str(action))]
+    
     i3xfce.loggers.ROOTLOGGER.debug("Executing the %s action", action)
     # Get the real user behind the sudo
     username = os.getenv("SUDO_USER")
@@ -367,8 +369,7 @@ class CmdLine(object):
           ignore_errors="yes",
           roles=args.parts
           )
-      play = Play().load(play_source, variable_manager=variable_manager, loader=loader)
-      CmdLine._execute_play(play, inventory, variable_manager, loader, options, tasks_count_callback)
+      CmdLine._execute_play(play_source, inventory, variable_manager, loader, options, tasks_count_callback)
 
       i3xfce.loggers.ROOTLOGGER.debug("%i tasks are going to be executed", tasks_count_callback.get_total_tasks_num())
       play_source["ignore_errors"] = "no"
@@ -376,7 +377,7 @@ class CmdLine(object):
                               become_method=None, verbosity=0, check=args.dryrun)
       self._results_callback = PlaybookExecutionCallback(tasks_count_callback.get_total_tasks_num(),
                                                          tasks_count_callback.get_task_name_max_len())
-      CmdLine._execute_play(play, inventory, variable_manager, loader, options, self._results_callback)
+      CmdLine._execute_play(play_source, inventory, variable_manager, loader, options, self._results_callback)
 
       self._results_callback.get_progress_bar().stop()
       self._results_callback.get_progress_bar().join()
@@ -402,20 +403,23 @@ class CmdLine(object):
 
     # Parser for list command
     install_parser = root_subparsers.add_parser('install', help='install files')
-    install_parser.add_argument('--parts', '-p', help='Parts to install', nargs="+", metavar=dirs,
-                                type=str, choices=dirs, default=dirs)
+    install_parser.add_argument('--parts', '-p', help='Parts to install', action="append", metavar=dirs,
+                                type=str, choices=dirs)
     install_parser.add_argument('--verbose', "-v", help='Verbose mode', action='store_true', default=False)
     install_parser.add_argument('--dryrun', "-d", help='Dry run mode', action='store_true', default=False)
 
     # Parser for list command
     uninstall_parser = root_subparsers.add_parser('uninstall', help='uninstall files')
-    uninstall_parser.add_argument('--parts', '-p', help='Parts to install', nargs="+", metavar=dirs, type=str,
-                                  choices=dirs, default=dirs)
+    uninstall_parser.add_argument('--parts', '-p', help='Parts to install', action="append", metavar=dirs, type=str,
+                                  choices=dirs)
     uninstall_parser.add_argument('--verbose', "-v", help='Verbose mode', action='store_true', default=False)
     uninstall_parser.add_argument('--dryrun', "-d", help='Dry run mode', action='store_true', default=False)
 
-    return parser.parse_args(raw_args[1:])
-
+    res = parser.parse_args(raw_args[1:])
+    if res.parts is None:
+      res.parts = dirs
+    return res
+  
   def signal_handler(self, *_):
     """
     Handler called when ctrl-c is pressed
@@ -437,6 +441,7 @@ def main():
     cli = CmdLine()
     signal.signal(signal.SIGINT, partial(cli.signal_handler, cli))
     args = cli.parse_args(sys.argv)
+    
     if args.function != None:
       if args.verbose is True:
         i3xfce.loggers.set_log_level(logging.DEBUG)
