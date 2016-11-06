@@ -22,6 +22,7 @@ Setup script for i3-xfce
 import sys
 import os
 from platform import python_version
+from pip.req import parse_requirements
 import distutils
 try:
   from setuptools import setup, find_packages
@@ -49,8 +50,9 @@ def execute_setup():
           data_files.append((os.path.join("i3xfce", "resources",
                                           os.path.dirname(str(real_path))),
                              [os.path.join("resources", str(real_path))]))
-
-  requirements = [i.strip() for i in open("requirements.txt").readlines()]
+  
+  install_reqs = parse_requirements("requirements.txt", session=False)
+  requirements = [str(ir.req) for ir in install_reqs]
 
   setup(
       name="i3-xfce",
