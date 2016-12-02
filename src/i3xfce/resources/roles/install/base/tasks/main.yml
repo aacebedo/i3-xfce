@@ -15,11 +15,11 @@
        - compton
        
     - name: Copy the autostart scripts
-      copy: src={{item}} dest=/home/{{remote_user}}/.config/autostart/ owner={{remote_user}} group={{remote_user}} mode='u=rw'
+      copy: src=autostart/{{item}} dest=/home/{{remote_user}}/.config/autostart/ owner={{remote_user}} group={{remote_user}} mode='u=rw'
       with_items:
-       - autostart/compton.desktop
-       - autostart/i3.desktop
-       - autostart/xfce4-panel.desktop
+       - compton.desktop
+       - i3.desktop
+       - xfce4-panel.desktop
     
     - name: Remove previous xfce4 sessions
       file: path=/home/{{remote_user}}/.cache/sessions state=absent
