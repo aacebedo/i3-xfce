@@ -1,4 +1,4 @@
 include versioneer.py
 include *.md
-recursive-include resources *
+recursive-include src/i3xfce/resources *
 include src/i3xfce/_version.py
