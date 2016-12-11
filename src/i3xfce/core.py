@@ -174,10 +174,11 @@ class TaskCountCallback(CallbackBase):
     """
     Function executed when a task starts
     """
-    i3xfce.loggers.ROOTLOGGER.debug("Counted task: %s", task)
-    self._total_tasks_num = self._total_tasks_num + 1
-    if len(task.name) > self._task_name_max_len:
-      self._task_name_max_len = len(task.name)
+    if task.name != "":
+      i3xfce.loggers.ROOTLOGGER.debug("Counted task: %s", task.name)
+      self._total_tasks_num = self._total_tasks_num + 1
+      if len(task.name) > self._task_name_max_len:
+        self._task_name_max_len = len(task.name)
 
   def get_total_tasks_num(self):
     """
@@ -258,19 +259,20 @@ class PlaybookExecutionCallback(CallbackBase):
     """
     Function executed when a task is completed
     """
-    i3xfce.loggers.ROOTLOGGER.debug("Task completed")
+    i3xfce.loggers.ROOTLOGGER.debug("Task '%s' completed", result._task.get_name()) # pylint: disable=protected-access
 
   def v2_runner_on_skipped(self, result):
     """
     Function executed when a task is skipped
     """
-    i3xfce.loggers.ROOTLOGGER.warn("Task skipped: %s", result._result["msg"]) # pylint: disable=protected-access
+    i3xfce.loggers.ROOTLOGGER.warn("Task '%s' skipped", result._task.get_name()) # pylint: disable=protected-access
 
   def v2_runner_on_failed(self, result, ignore_errors=False):
     """
     Function executed when a task fails
     """
-    i3xfce.loggers.ROOTLOGGER.error("Task failed: %s", result._result["msg"]) # pylint: disable=protected-access
+    i3xfce.loggers.ROOTLOGGER.error("Task '%s' failed: %s", result._task.get_name(), # pylint: disable=protected-access
+                                    result._result["msg"]) # pylint: disable=protected-access
     self._task_failed = True
 
   def v2_playbook_on_play_start(self, play):
@@ -284,7 +286,8 @@ class PlaybookExecutionCallback(CallbackBase):
     """
     Function executed when a task starts
     """
-    self.get_progress_bar().increment_step(task.get_name())
+    if task.name != "":
+      self.get_progress_bar().increment_step(task.get_name())
 
   def get_progress_bar(self):
     """
@@ -459,4 +462,3 @@ def main():
     i3xfce.loggers.ROOTLOGGER.error("A task failed to execute, check the messages and correct \
 the issue before restarting i3-xfce")
     sys.exit(exc)
-
