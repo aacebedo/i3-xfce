@@ -1,57 +1,13 @@
-    - name: Remove Numix PPA
-      apt_repository: repo='{{item}}' state=absent update_cache=true
-      with_items: 
-       - ppa:numix/ppa
-
-    - name: Remove packages using apt
-      apt: pkg={{item}} force=yes state=absent  
-      with_items:
-       - numix-plymouth-theme
-       - numix-folders
-       - fonts-powerline
-       - numix-gtk-theme
-       - numix-icon-theme-circle
-       - numix-wallpaper-lightbulb
-       - feh
-       - conky
-
-    - name: Remove i3 configuration directory
-      file: path=/home/{{remote_user}}/.i3 state=absent
-
-    - name: Remove conky configuration directory
-      file: path=/home/{{remote_user}}/.conky state=absent
-    
-    - name: Reset xfce4 notification theme (1/2)
+    - name: Reset xfce4 notification theme
       lineinfile: dest=/home/{{remote_user}}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml regexp=".*notify-location.*" line="<property name=\"notify-location\" type=\"uint\" value=\"3\"/>"
-       
-    - name: Reset xfce4 notification theme (1/2)
       lineinfile: dest=/home/{{remote_user}}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml regexp=".*theme.*" line="<property name=\"theme\" type=\"string\" value=\"Greybird\"/>"
     
     - name: Reset xfce4 theme
       lineinfile: dest=/home/{{remote_user}}/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml regexp=".*name=\"ThemeName\".*" line="<property name=\"ThemeName\" type=\"string\" value=\"Greybird\"/>"
-      
-    - name: Reset xfce4 icon theme
       lineinfile: dest=/home/{{remote_user}}/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml regexp=".*name=\"IconThemeName\".*" line="<property name=\"IconThemeName\" type=\"string\" value=\"elementary-xfce-dark\"/>"
     
     - name: Reset lightdm theme
       lineinfile: dest=/etc/lightdm/lightdm-gtk-greeter.conf regexp="^theme-name.*" line="theme-name=Greybird" state=present
-    
-    - name: Reset lightdm icon theme
       lineinfile: dest=/etc/lightdm/lightdm-gtk-greeter.conf regexp="^icon-theme-name.*" line="icon-theme-name=elementary-xfce-dark"  state=present
-    
-    - name: Reset lightdm background (1/2)
       lineinfile: dest=/etc/lightdm/lightdm-gtk-greeter.conf regexp="^background.*" state=absent
-    
-    - name: Reset lightdm background (2/2)
       lineinfile: dest=/etc/lightdm/lightdm-gtk-greeter.conf regexp="^user-background.*" state=absent
-    
-    - name: Remove conky configuration files   
-      file: path=/home/{{remote_user}}/.conky/{{ item }} state=absent
-      with_items:
-       - conkyrc_left
-       - conkyrc_right
-       
-    - name: Remove themed fonts   
-      file: path=/home/{{remote_user}}/.fonts/{{ item }} state=absent
-      with_items:
-       - openlogos.ttf
