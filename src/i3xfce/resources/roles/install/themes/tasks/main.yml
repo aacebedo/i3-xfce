@@ -15,7 +15,7 @@
        - lightdm
 
     - name: Copy i3 configuration files
-      file: path=/home/{{remote_user}}/.i3 state=directory owner={{remote_user}} group={{remote_user}} mode='u=rw'
+      file: path=/home/{{remote_user}}/.i3 state=directory owner={{remote_user}} group={{remote_user}} mode='u=rwX'
     - stat: path=/home/{{remote_user}}/.i3/config
       register: i3_config_exists
     - copy: src=i3/config dest=/home/{{remote_user}}/.i3/config owner={{remote_user}} group={{remote_user}} mode='u=rw'
@@ -39,14 +39,14 @@
       when: compton_conf_exists.stat.exists == False
     
     - name: Apply xfce theme
-      file: path=/home/{{remote_user}}/.config/xfce4/xfconf/xfce-perchannel-xml state=directory owner={{remote_user}} group={{remote_user}} mode='u=rw'
+      file: path=/home/{{remote_user}}/.config/xfce4/xfconf/xfce-perchannel-xml state=directory owner={{remote_user}} group={{remote_user}} mode='u=rwX'
     - shell: cp -n /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml /home/{{remote_user}}/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml
     - file: path=/home/{{remote_user}}/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml owner={{remote_user}}  group={{remote_user}} mode='u=rw'
     - lineinfile: dest=/home/{{remote_user}}/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml regexp=".*name=\"ThemeName\".*" line="<property name=\"ThemeName\" type=\"string\" value=\"Numix\"/>"
     - lineinfile: dest=/home/{{remote_user}}/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml regexp=".*name=\"IconThemeName\".*" line="<property name=\"IconThemeName\" type=\"string\" value=\"Numix-Circle\"/>"
     
     - name: Apply xfce notification theme
-      copy: src=xfce/xfce4-notifyd.xml dest=/home/{{remote_user}}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml owner={{remote_user}}  group={{remote_user}} mode='u=rw'
+      copy: src=xfce/xfce4-notifyd.xml dest=/home/{{remote_user}}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml owner={{remote_user}} group={{remote_user}} mode='u=rw'
 
     - name: Apply lightdm theme
       lineinfile: dest=/etc/lightdm/lightdm-gtk-greeter.conf line='[greeter]'
@@ -56,7 +56,7 @@
     - lineinfile: dest=/etc/lightdm/lightdm-gtk-greeter.conf regexp="^user-background.*" line='user-background = false' insertafter="[greeter]" state=present
     
     - name: Add themed fonts
-      file: path=/home/{{remote_user}}/.fonts state=directory owner={{remote_user}} group={{remote_user}} mode='u=rw'    
+      file: path=/home/{{remote_user}}/.fonts state=directory owner={{remote_user}} group={{remote_user}} mode='u=rwX'    
     - stat: path=/home/{{remote_user}}/.fonts/openlogos.ttf
       register: openlogos_exists      
     - copy: src=fonts/openlogos.ttf dest=/home/{{remote_user}}/.fonts/openlogos.ttf owner={{remote_user}} group={{remote_user}} mode='u=rw'

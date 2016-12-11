@@ -24,8 +24,8 @@
     
     - name: Install j4-desktop-menu
       get_url: url=https://github.com/enkore/j4-dmenu-desktop/archive/r2.12.tar.gz dest=/tmp/j4-desktop-menu.tar.gz
-      unarchive: src=/tmp/j4-desktop-menu.tar.gz dest=/tmp/
-      shell: cmake ./ && make install chdir=/tmp/j4-dmenu-desktop-r2.12
+    - unarchive: src=/tmp/j4-desktop-menu.tar.gz dest=/tmp/
+    - shell: cmake ./ && make install chdir=/tmp/j4-dmenu-desktop-r2.12
 
     - name: Install python packages using pip
       pip: name={{item}} state=present
@@ -38,13 +38,13 @@
        - cheat
 
     - name: Configuring Albert
-      file: dest=/home/{{remote_user}}/.config/albert owner={{remote_user}} group={{remote_user}} state=directory
+      file: dest=/home/{{remote_user}}/.config/albert owner={{remote_user}} group={{remote_user}} state=directory mode='u=rwX'
     - copy: src=albert.conf dest=/home/{{remote_user}}/.config/albert/albert.conf owner={{remote_user}} group={{remote_user}} mode='u=rw' 
       
     - name: Configuring zsh
       copy: src=zsh/zshrc dest=/home/{{remote_user}}/.zshrc owner={{remote_user}} group={{remote_user}} mode='u=rw'
     - shell: chsh {{remote_user}} -s /bin/zsh
     - git: repo=https://github.com/robbyrussell/oh-my-zsh.git dest=/home/{{remote_user}}/.oh-my-zsh
-    - file: path=/home/{{remote_user}}/.oh-my-zsh recurse=true owner={{remote_user}} group={{remote_user}}
+    - file: path=/home/{{remote_user}}/.oh-my-zsh recurse=true owner={{remote_user}} group={{remote_user}} mode='u=rwX'
       
       

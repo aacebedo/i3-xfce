@@ -265,7 +265,7 @@ class PlaybookExecutionCallback(CallbackBase):
     """
     Function executed when a task is skipped
     """
-    i3xfce.loggers.ROOTLOGGER.warn("Task '%s' skipped", result._task.get_name()) # pylint: disable=protected-access
+    i3xfce.loggers.ROOTLOGGER.debug("Task '%s' skipped", result._task.get_name()) # pylint: disable=protected-access
 
   def v2_runner_on_failed(self, result, ignore_errors=False):
     """
